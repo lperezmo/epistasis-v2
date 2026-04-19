@@ -111,7 +111,7 @@ packages = ["epistasis"]
 mypy_path = "python"
 
 [[tool.mypy.overrides]]
-module = ["gpmap", "gpmap.*"]
+module = ["gpmap", "gpmap.*", "sklearn", "sklearn.*", "lmfit", "lmfit.*", "emcee", "emcee.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
