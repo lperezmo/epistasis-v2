@@ -61,10 +61,10 @@ Ported modules:
 - `epistasis.exceptions` (`EpistasisError`, `XMatrixError`, `FittingError`)
 - `epistasis.utils` (`genotypes_to_X`)
 - `epistasis.models.base` (`AbstractEpistasisModel`, `EpistasisBaseModel`)
+- `epistasis.models.linear` (`EpistasisLinearRegression` with analytic coefficient standard errors, `EpistasisRidge`, `EpistasisLasso`, `EpistasisElasticNet`)
 
 Pending:
 
-- `epistasis.models.linear.{ordinary,ridge,lasso,elastic_net}`
 - `epistasis.models.nonlinear.{ordinary,minimizer,power,spline}`
 - `epistasis.models.classifiers.{logistic,gaussian_process,gmm,discriminant_analysis}`
 - `epistasis.simulate.{linear,power,base}`
