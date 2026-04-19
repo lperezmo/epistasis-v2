@@ -41,6 +41,7 @@ dependencies = [
     # gpmap-v2 pinned once published; until then we develop against a local
     # editable install coordinated with the gpmap-v2 repo.
     # "gpmap-v2>=0.1.0",
+    "gpmap-v2",
 ]
 
 [project.urls]
@@ -111,3 +112,6 @@ mypy_path = "python"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v --strict-markers"
+
+[tool.uv.sources]
+gpmap-v2 = { path = "../gpmap", editable = true }
