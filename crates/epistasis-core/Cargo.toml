@@ -1,0 +1,16 @@
+[package]
+name = "epistasis-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+name = "epistasis_core"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.23", features = ["extension-module", "abi3-py310"] }
+numpy = "0.23"
+ndarray = { version = "0.16", features = ["rayon"] }
+rayon = "1.10"

@@ -1,0 +1,3 @@
+"""Type stubs for the Rust extension module `epistasis._core`."""
+
+def version() -> str: ...

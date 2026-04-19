@@ -1,0 +1,13 @@
+[workspace]
+members = ["crates/epistasis-core"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Unlicense"
+repository = "https://github.com/lperezmo/epistasis-v2"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
