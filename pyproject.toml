@@ -72,7 +72,14 @@ version_toml = ["pyproject.toml:project.version"]
 version_variables = ["python/epistasis/_version.py:__version__"]
 tag_format = "v{version}"
 commit_message = "chore(release): v{version}"
+# Release job does not build artifacts. Wheel + sdist builds happen in
+# downstream matrix jobs via PyO3/maturin-action where Rust is available.
+# Putting a build step here would fail: python-semantic-release runs in a
+# Docker image with no Rust toolchain.
 build_command = ""
+# Force first release to go straight to 1.0.0 instead of climbing from
+# 0.0.1. With this set, versions below 1.0.0 are treated as disallowed.
+allow_zero_version = false
 
 [tool.semantic_release.branches.main]
 match = "main"

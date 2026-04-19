@@ -1,0 +1,15 @@
+# Normalize line endings on checkout. Silences CRLF warnings on Windows and
+# keeps the repo LF-only on disk so CI diffs stay clean.
+* text=auto eol=lf
+
+# Binary files untouched.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdb binary
+*.so binary
+*.pyd binary
+*.dll binary
+*.dylib binary
