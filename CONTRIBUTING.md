@@ -1,113 +1,63 @@
 # Contributing
 
-Thanks for considering a contribution. epistasis-v2 uses a small set of conventions so that releases and changelog updates are automatic. The whole pipeline, from your commit on `main` to a published PyPI wheel, is driven by the commit message format.
+PRs welcome, as long as they make damn sense.
+
+Short version: keep it working, keep it typed, keep the commit messages in Conventional Commits format so the release robot can do its job.
 
 ## Prerequisites
 
 - Python >= 3.10
 - Rust toolchain (`rustup default stable`)
-- `uv` (install from https://docs.astral.sh/uv/)
-- A local checkout of `gpmap-v2` at `../gpmap` during pre-release co-development (this is wired via `[tool.uv.sources]` in `pyproject.toml`)
+- [`uv`](https://docs.astral.sh/uv/)
+- Local checkout of `gpmap-v2` at `../gpmap` (pre-release co-development; once gpmap-v2 ships to PyPI this goes away)
 
-## First-time setup
-
-```bash
-uv sync                           # install runtime + dev deps, builds the Rust ext
-uv run maturin develop --release  # rebuild the Rust ext after any Rust change
-```
-
-## Day-to-day loop
+## Setup
 
 ```bash
-uv run pytest                     # run the test suite
-uv run ruff check .               # lint
-uv run ruff format .              # autoformat
-uv run mypy python/epistasis      # type-check (strict)
+uv sync
+uv run maturin develop --release
 ```
 
-After any edit under `crates/epistasis-core/`, rerun `maturin develop --release` to rebuild the extension.
+After edits under `crates/epistasis-core/`, rerun `maturin develop --release`.
 
-## Commit conventions
+## Everyday loop
 
-This repo uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). Every commit on `main` is consumed by `python-semantic-release`, which decides the next version number and generates the changelog entry.
+```bash
+uv run pytest
+uv run ruff check .
+uv run ruff format .
+uv run mypy python/epistasis
+```
 
-Format:
+CI runs the same checks on Python 3.10 through 3.13 across Ubuntu, macOS, and Windows. If CI is green, the PR is probably fine.
+
+## Commits
+
+[Conventional Commits](https://www.conventionalcommits.org/). `python-semantic-release` reads your commit messages to decide the next version and generate the changelog, so the format matters.
 
 ```
 <type>(<scope>): <summary>
-
-<body>
 ```
 
-Types that bump the version:
+Bumps the version: `feat` (minor), `fix` (patch), `perf` (patch).
+Does not bump: `refactor`, `docs`, `test`, `build`, `ci`, `chore`, `style`, `revert`.
 
-| Type    | Bump  | Use for                               |
-|---------|-------|---------------------------------------|
-| `feat`  | minor | user-visible new capability           |
-| `fix`   | patch | bug fix                               |
-| `perf`  | patch | performance change with same outcome  |
+Breaking change: append `!` after the type (`feat!:`, `fix(scope)!:`) and add a `BREAKING CHANGE:` footer. Forces a major bump.
 
-Types that do not bump the version (CHANGELOG only, or silent):
+House rules:
 
-| Type       | Use for                                 |
-|------------|-----------------------------------------|
-| `refactor` | internal restructuring, no behavior     |
-| `docs`     | doc / comment edits only                |
-| `test`     | test-only changes                       |
-| `build`    | build config                            |
-| `ci`       | GitHub Actions workflows                |
-| `chore`    | tooling, deps, housekeeping             |
-| `style`    | formatting, no code change              |
-| `revert`   | revert of a prior commit                |
-
-Breaking changes: append `!` after the type, e.g. `feat(mapping)!: rename encoding_to_sites to sites_from_encoding`, and include a `BREAKING CHANGE:` footer explaining the migration. This forces a major bump.
-
-Scope is optional but strongly preferred. Typical scopes:
-
-- `mapping`, `matrix`, `models`, `simulate`, `sampling`, `stats`
-- `core` for Rust kernel work
-- `ci`, `build`, `deps`
-
-Examples from this repo:
-
-```
-feat(matrix): port design-matrix construction with NumPy backend
-feat(mapping): port mapping module against gpmap-v2 schema
-feat: wire gpmap-v2 as editable dep and add API contract tests
-```
-
-Do not add `Co-Authored-By` footers and do not use em dashes in commit messages or code.
-
-## Pull request checklist
-
-Before opening a PR:
-
-- [ ] `uv run pytest` passes locally on Python 3.10 and latest (we test 3.10 through 3.13 in CI).
-- [ ] `uv run ruff check .` and `uv run ruff format --check .` clean.
-- [ ] `uv run mypy python/epistasis` clean (strict mode).
-- [ ] Commit messages follow Conventional Commits.
-- [ ] Any behavior change has a test.
-- [ ] Any schema change coordinated with `gpmap-v2`, with a bridge test in `tests/test_gpmap_bridge.py` updated accordingly.
+- No `Co-Authored-By` footers.
+- No em dashes anywhere (commit bodies, code, docs).
+- No emojis in code or commit messages.
 
 ## Release flow
 
-Maintainers push to `main`. GitHub Actions then:
+Push to `main`. GitHub Actions runs `python-semantic-release`, which bumps the version, writes `CHANGELOG.md`, tags, builds wheels for every OS and Python version via `maturin-action`, and publishes to PyPI with OIDC. No manual steps.
 
-1. Runs `python-semantic-release` to decide the next version from commit history, writes `CHANGELOG.md`, bumps `pyproject.toml` and `python/epistasis/_version.py`, tags `vX.Y.Z`.
-2. Builds wheels on Linux / macOS (x86_64 and aarch64) / Windows for Python 3.10 through 3.13 via `maturin-action`, plus an sdist.
-3. Publishes to PyPI with OIDC trusted publishing.
-4. Uploads all artifacts to the GitHub Release.
+## Coordinating with gpmap-v2
 
-No manual `pip publish`, no keys to manage, no version file to edit.
-
-## Project layout
-
-See the "Repository layout" section in `README.md`.
-
-## Coordinating schema changes with gpmap-v2
-
-`epistasis-v2` depends on gpmap-v2's `GenotypePhenotypeMap` API and `encoding_table` schema. The contract is encoded in `tests/test_gpmap_bridge.py`. If a change on the gpmap side breaks any of those tests, stop and coordinate before shipping.
+This package depends on the gpmap-v2 `GenotypePhenotypeMap` API and `encoding_table` schema. The contract lives in `tests/test_gpmap_bridge.py`. If a gpmap-side change breaks any of those, stop and coordinate.
 
 ## Legacy source
 
-`_legacy/` holds the v1 tree for reference during porting. It is gitignored and not part of the distribution. When Phase 1 is complete and no module needs to look back at it, delete the folder.
+`_legacy/` holds the v1 tree for reference during the Phase 1 port. It is gitignored and not shipped. Delete the folder once nothing needs to look back at it.
