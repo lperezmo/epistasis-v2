@@ -1,0 +1,3 @@
+streamlit>=1.51
+plotly>=5.24
+epistasis-v2>=1.1.0

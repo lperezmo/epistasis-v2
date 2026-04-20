@@ -4,6 +4,7 @@ CLAUDE.md
 .claude/
 references/
 _legacy/
+local_dev/
 
 # Python
 __pycache__/

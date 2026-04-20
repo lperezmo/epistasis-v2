@@ -1,8 +1,12 @@
 # epistasis-v2
 
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://epistasis-v2.streamlit.app/)
+
 High-performance Python library for fitting high-order epistatic interactions in genotype-phenotype maps. A clean-break rewrite of [harmslab/epistasis](https://github.com/harmslab/epistasis).
 
 **Status: alpha.** Phase 1 port, Phase 2 Rust kernel, and the Phase 3 Walsh-Hadamard OLS fast path are all in. Sparse design matrices for high-order Lasso and remaining polish items are still to come.
+
+A multi-page Streamlit showcase lives under [`examples/`](./examples/) and is published at [epistasis-v2.streamlit.app](https://epistasis-v2.streamlit.app/).
 
 ## What changed from v1
 
