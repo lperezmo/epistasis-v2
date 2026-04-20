@@ -62,11 +62,10 @@ Ported modules:
 - `epistasis.utils` (`genotypes_to_X`)
 - `epistasis.models.base` (`AbstractEpistasisModel`, `EpistasisBaseModel`)
 - `epistasis.models.linear` (`EpistasisLinearRegression` with analytic coefficient standard errors, `EpistasisRidge`, `EpistasisLasso`, `EpistasisElasticNet`)
+- `epistasis.models.nonlinear` (`EpistasisNonlinearRegression`, `FunctionMinimizer`; `power` and `spline` variants deferred)
+- `epistasis.models.classifiers` (`EpistasisLogisticRegression`; LDA, QDA, Gaussian Process, and GMM classifiers deferred pending demand)
 
 Pending:
-
-- `epistasis.models.nonlinear.{ordinary,minimizer,power,spline}`
-- `epistasis.models.classifiers.{logistic,gaussian_process,gmm,discriminant_analysis}`
 - `epistasis.simulate.{linear,power,base}`
 - `epistasis.sampling.bayesian`
 - `epistasis.stats`, `epistasis.validate`
