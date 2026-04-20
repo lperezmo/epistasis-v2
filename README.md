@@ -34,7 +34,7 @@ epistasis-v2/
 
 ## Installation (dev)
 
-Requires Python >= 3.10 and a Rust toolchain. `gpmap-v2` is consumed as an editable local dep from `../gpmap`.
+Requires Python >= 3.10 and a Rust toolchain. `gpmap-v2` is pulled from PyPI.
 
 ```bash
 uv sync

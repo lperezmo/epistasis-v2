@@ -9,7 +9,15 @@ Short version: keep it working, keep it typed, keep the commit messages in Conve
 - Python >= 3.10
 - Rust toolchain (`rustup default stable`)
 - [`uv`](https://docs.astral.sh/uv/)
-- Local checkout of `gpmap-v2` at `../gpmap` (pre-release co-development; once gpmap-v2 ships to PyPI this goes away)
+
+`gpmap-v2` is installed from PyPI. If you want to co-develop against a local checkout, add this to `pyproject.toml`:
+
+```toml
+[tool.uv.sources]
+gpmap-v2 = { path = "../gpmap", editable = true }
+```
+
+and drop it before committing.
 
 ## Setup
 
