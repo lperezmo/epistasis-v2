@@ -13,6 +13,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 
 from epistasis.exceptions import FittingError
+from epistasis.fast import fwht_ols_coefficients
 from epistasis.matrix import ModelType
 from epistasis.models.base import EpistasisBaseModel
 
@@ -66,9 +67,28 @@ class EpistasisLinearRegression(EpistasisBaseModel):
         X: Any = None,
         y: Any = None,
     ) -> EpistasisLinearRegression:
-        X_mat = self._resolve_X(X).astype(np.float64)
         y_arr = self._resolve_y(y)
 
+        if X is None and self._gpm is not None:
+            beta = fwht_ols_coefficients(
+                self._gpm.binary_packed,
+                y_arr,
+                self.Xcolumns,
+                model_type=self.model_type,
+            )
+            if beta is not None:
+                self.thetas = beta
+                if self._epistasis is not None:
+                    self._epistasis.values = self.thetas
+                    # Exactly-determined system (n == p): residuals are zero,
+                    # no degrees of freedom for sigma^2, so stderr is undefined.
+                    self._epistasis.stdeviations = np.full(
+                        self.thetas.shape[0], np.nan, dtype=np.float64
+                    )
+                self._sync_sklearn_state(len(self.Xcolumns))
+                return self
+
+        X_mat = self._resolve_X(X).astype(np.float64)
         self._sklearn.fit(X_mat, y_arr)
         self.thetas = np.reshape(np.asarray(self._sklearn.coef_), (-1,))
 
@@ -77,6 +97,20 @@ class EpistasisLinearRegression(EpistasisBaseModel):
             self._epistasis.stdeviations = self._ols_stderr(X_mat, y_arr)
 
         return self
+
+    def _sync_sklearn_state(self, n_features: int) -> None:
+        """Populate sklearn's fitted-attribute contract without a full fit.
+
+        Lets `predict` and `score` reach into `self._sklearn` after the FWHT
+        fast path bypasses sklearn's own solver.
+        """
+        assert self.thetas is not None
+        self._sklearn.coef_ = self.thetas.astype(np.float64, copy=True)
+        self._sklearn.intercept_ = 0.0
+        self._sklearn.n_features_in_ = n_features
+        self._sklearn._residues = np.float64(0.0)
+        self._sklearn.rank_ = n_features
+        self._sklearn.singular_ = np.ones(n_features, dtype=np.float64)
 
     def predict(self, X: Any = None) -> np.ndarray:
         if self.thetas is None:

@@ -2,7 +2,7 @@
 
 High-performance Python library for fitting high-order epistatic interactions in genotype-phenotype maps. A clean-break rewrite of [harmslab/epistasis](https://github.com/harmslab/epistasis).
 
-**Status: alpha.** Phase 1 port complete; Phase 2 Rust kernel and Phase 3 FWHT / sparse paths still to come.
+**Status: alpha.** Phase 1 port, Phase 2 Rust kernel, and the Phase 3 Walsh-Hadamard OLS fast path are all in. Sparse design matrices for high-order Lasso and remaining polish items are still to come.
 
 ## What changed from v1
 
@@ -52,27 +52,43 @@ uv run mypy python/epistasis
 
 ## Current progress
 
-Phase 0 (scaffold) and Phase 1 (port) complete.
+Phase 0 (scaffold), Phase 1 (port), Phase 2 (Rust kernels), and most of Phase 3 (FWHT fast path) are complete.
 
 Ported modules:
 
 - `epistasis.mapping` (sites, coefficients, `EpistasisMap`)
-- `epistasis.matrix` (encoded vectors, design matrix, NumPy backend)
+- `epistasis.matrix` (encoded vectors and design matrix; Rust-backed)
 - `epistasis.exceptions` (`EpistasisError`, `XMatrixError`, `FittingError`)
 - `epistasis.utils` (`genotypes_to_X`)
 - `epistasis.models.base` (`AbstractEpistasisModel`, `EpistasisBaseModel`)
-- `epistasis.models.linear` (`EpistasisLinearRegression` with analytic coefficient standard errors, `EpistasisRidge`, `EpistasisLasso`, `EpistasisElasticNet`)
+- `epistasis.models.linear` (`EpistasisLinearRegression` with analytic coefficient standard errors and a Walsh-Hadamard fast path for full-order biallelic fits, `EpistasisRidge`, `EpistasisLasso`, `EpistasisElasticNet`)
 - `epistasis.models.nonlinear` (`EpistasisNonlinearRegression`, `FunctionMinimizer`; `power` and `spline` variants deferred)
 - `epistasis.models.classifiers` (`EpistasisLogisticRegression`; LDA, QDA, Gaussian Process, and GMM deferred)
 - `epistasis.simulate` (`simulate_linear_gpm`, `simulate_random_linear_gpm`)
 - `epistasis.stats` (Pearson, R^2, RMSD, SS residuals, AIC, `split_gpm`)
 - `epistasis.validate` (`k_fold`, `holdout`)
 - `epistasis.sampling.bayesian` (`BayesianSampler` via emcee 3)
+- `epistasis.fast` (`fwht_ols_coefficients`: closed-form OLS via FWHT)
+
+Rust hot-path kernels in `epistasis._core`:
+
+- `encode_vectors` (uint8 binary_packed to int8 Hadamard/local encoding)
+- `build_model_matrix` (parallel site-product over genotype rows; flat ragged sites layout)
+- `fwht` (iterative butterfly Fast Walsh-Hadamard Transform)
+
+Benchmarks (release build, Windows, 16 threads; see `benches/`):
+
+| kernel                               | input                 | Rust      | NumPy reference | speedup |
+|--------------------------------------|-----------------------|-----------|-----------------|---------|
+| `build_model_matrix`                 | L=12, order=3         | 1.7 ms    | 10.1 ms         | ~6x     |
+| `build_model_matrix`                 | L=16, order=3         | 50 ms     | 283 ms          | ~5.7x   |
+| `encode_vectors`                     | L=16 (65k genotypes)  | 1.06 ms   | 3.24 ms         | ~3x     |
+| `EpistasisLinearRegression.fit`      | full-order L=10       | 0.78 ms   | 292 ms (lstsq)  | ~375x   |
+| `EpistasisLinearRegression.fit`      | full-order L=12       | 3.4 ms    | 15.4 s (lstsq)  | ~4500x  |
 
 Pending:
 
-- Rust kernels for `build_model_matrix`, `encode_vectors`, FWHT fast path (Phase 2)
-- Sparse design matrix path for Lasso / ElasticNet (Phase 3)
+- Sparse design matrix path for Lasso / ElasticNet (memory at L >= 20)
 - `power.py` and `spline.py` nonlinear variants
 - Remaining classifier implementations if demand surfaces
 - ReadTheDocs build
