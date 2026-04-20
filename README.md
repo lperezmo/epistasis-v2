@@ -2,7 +2,7 @@
 
 High-performance Python library for fitting high-order epistatic interactions in genotype-phenotype maps. A clean-break rewrite of [harmslab/epistasis](https://github.com/harmslab/epistasis).
 
-**Status: pre-alpha.** Active development, not published to PyPI.
+**Status: alpha.** Phase 1 port complete; Phase 2 Rust kernel and Phase 3 FWHT / sparse paths still to come.
 
 ## What changed from v1
 
@@ -52,7 +52,7 @@ uv run mypy python/epistasis
 
 ## Current progress
 
-Phase 0 (scaffold) and part of Phase 1 (port) are complete.
+Phase 0 (scaffold) and Phase 1 (port) complete.
 
 Ported modules:
 
@@ -63,13 +63,18 @@ Ported modules:
 - `epistasis.models.base` (`AbstractEpistasisModel`, `EpistasisBaseModel`)
 - `epistasis.models.linear` (`EpistasisLinearRegression` with analytic coefficient standard errors, `EpistasisRidge`, `EpistasisLasso`, `EpistasisElasticNet`)
 - `epistasis.models.nonlinear` (`EpistasisNonlinearRegression`, `FunctionMinimizer`; `power` and `spline` variants deferred)
-- `epistasis.models.classifiers` (`EpistasisLogisticRegression`; LDA, QDA, Gaussian Process, and GMM classifiers deferred pending demand)
+- `epistasis.models.classifiers` (`EpistasisLogisticRegression`; LDA, QDA, Gaussian Process, and GMM deferred)
+- `epistasis.simulate` (`simulate_linear_gpm`, `simulate_random_linear_gpm`)
+- `epistasis.stats` (Pearson, R^2, RMSD, SS residuals, AIC, `split_gpm`)
+- `epistasis.validate` (`k_fold`, `holdout`)
+- `epistasis.sampling.bayesian` (`BayesianSampler` via emcee 3)
 
 Pending:
-- `epistasis.simulate.{linear,power,base}`
-- `epistasis.sampling.bayesian`
-- `epistasis.stats`, `epistasis.validate`
-- Rust kernels for `build_model_matrix`, `encode_vectors`, FWHT
+
+- Rust kernels for `build_model_matrix`, `encode_vectors`, FWHT fast path (Phase 2)
+- Sparse design matrix path for Lasso / ElasticNet (Phase 3)
+- `power.py` and `spline.py` nonlinear variants
+- Remaining classifier implementations if demand surfaces
 - ReadTheDocs build
 
 ## Contributing
