@@ -373,7 +373,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "emcee", specifier = ">=3.1" },
-    { name = "gpmap-v2", editable = "../gpmap" },
+    { name = "gpmap-v2", specifier = ">=1.0.0" },
     { name = "lmfit", specifier = ">=1.2" },
     { name = "matplotlib", specifier = ">=3.7" },
     { name = "numpy", specifier = ">=1.23" },
@@ -465,8 +465,8 @@ wheels = [
 
 [[package]]
 name = "gpmap-v2"
-version = "0.1.0"
-source = { editable = "../gpmap" }
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -475,27 +475,13 @@ dependencies = [
     { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "numpy", specifier = ">=1.24" },
-    { name = "openpyxl", marker = "extra == 'excel'", specifier = ">=3.1" },
-    { name = "pandas", specifier = ">=2.0" },
-    { name = "pyarrow", marker = "extra == 'parquet'", specifier = ">=14" },
-    { name = "scipy", specifier = ">=1.10" },
-]
-provides-extras = ["parquet", "excel"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "hypothesis", specifier = ">=6.100" },
-    { name = "maturin", specifier = ">=1.7" },
-    { name = "mypy", specifier = ">=1.10" },
-    { name = "openpyxl", specifier = ">=3.1" },
-    { name = "pytest", specifier = ">=8" },
-    { name = "pytest-benchmark", specifier = ">=4" },
-    { name = "pytest-cov", specifier = ">=5" },
-    { name = "ruff", specifier = ">=0.6" },
+sdist = { url = "https://files.pythonhosted.org/packages/ea/99/c3e48f993e51d752a40b43d15a61aec9da60925054e77e9606ef379a89d8/gpmap_v2-1.0.0.tar.gz", hash = "sha256:b71ba8e486105718e9097221e4d6fb16ffd34a953ebbc2369e0d7efa7eee97a5", size = 25086, upload-time = "2026-04-19T23:54:40.944Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/59/a8/f876d9920f36181230261172a4080686806ab24861c1cf66fcb36385d557/gpmap_v2-1.0.0-cp310-abi3-macosx_10_12_x86_64.whl", hash = "sha256:a7950760f22e72645694684cdeae63b5616afcdec4315c9eed77acb6827a1b10", size = 347998, upload-time = "2026-04-19T23:54:33.22Z" },
+    { url = "https://files.pythonhosted.org/packages/6b/b3/32f58c68a4b636329da6295a3f8487ba4877b249a760a4fe059894f34f9d/gpmap_v2-1.0.0-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:e72c0c0ce7bf0fd03a71a67f77e4dc7d854ee3b5a207a7011a124a0577cee55d", size = 343374, upload-time = "2026-04-19T23:54:34.941Z" },
+    { url = "https://files.pythonhosted.org/packages/83/f1/87e9e1250bb8c6aa4ebe5818c11bb4f8253fdc22418aa6978df430929e8c/gpmap_v2-1.0.0-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:962139d6b6e9759d33057bbd4fe467698c56496fbda274c04cf79ff7b21ef276", size = 389976, upload-time = "2026-04-19T23:54:36.479Z" },
+    { url = "https://files.pythonhosted.org/packages/85/08/2d99d316f6cdf8c660946253ecb83c2b2d9f62da4636a4f4179132050e08/gpmap_v2-1.0.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2b6d8d3cd05bd1f9632ed4a85107990a7d552890c411aa971b7517d3dd0794bf", size = 395946, upload-time = "2026-04-19T23:54:38.088Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/b6/2815f40c032bd30513cf362c64f6944159928c32208a36df66d96111c086/gpmap_v2-1.0.0-cp310-abi3-win_amd64.whl", hash = "sha256:d667cb02f9a1c90f012212e92c9a882515809a01934af25db6714e7be505a9ca", size = 226056, upload-time = "2026-04-19T23:54:39.561Z" },
 ]
 
 [[package]]
