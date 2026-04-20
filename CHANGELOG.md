@@ -1,6 +1,60 @@
 # CHANGELOG
 
 
+## v1.1.0 (2026-04-20)
+
+### Documentation
+
+- Refresh README status lines for landed Phase 2 and Phase 3 work
+  ([`fe431a8`](https://github.com/lperezmo/epistasis-v2/commit/fe431a8c7a68a8a0fe79f6e761e75c0bd753f593))
+
+The FWHT fast path is in EpistasisLinearRegression, so the "not yet landed" qualifier on the
+  Walsh-Hadamard bullet was stale. The sparse Lasso path is still pending and now reads as a
+  memory-scaling concern for L >= 20, not a speed item. Also corrects the bench directory note.
+
+### Features
+
+- **core**: Port design-matrix kernels and FWHT to Rust
+  ([`5e4c420`](https://github.com/lperezmo/epistasis-v2/commit/5e4c420cda5d75f61180e1eaaa3f7e20dbc5899a))
+
+Rust crate epistasis-core now exposes encode_vectors, build_model_matrix, and fwht via PyO3. The
+  NumPy backend becomes a reference-only oracle in _reference.py, used by the parity test suite to
+  verify the Rust kernels on every fit.
+
+- encode_vectors: parallel int8 conversion with a serial threshold at 2^18 cells so small inputs
+  skip rayon overhead. - build_model_matrix: ragged sites packed as flat int64 indices plus int64
+  offsets; parallel over output columns with a serial threshold at 2^15 cells. - fwht: iterative
+  in-place butterfly, zero extra deps.
+
+Measured on the Windows workstation: build_model_matrix is 3x to 6x faster than the NumPy reference
+  across L from 8 to 16. Full-order OLS via FWHT wins qualitatively (see test_fwht.py; the model
+  wiring lands separately).
+
+Bumps the Rust workspace version to 1.0.0 and teaches python-semantic-release to keep Cargo.toml in
+  sync with pyproject.toml on subsequent releases.
+
+### Performance Improvements
+
+- **linear**: Add FWHT fast path to EpistasisLinearRegression
+  ([`e03791c`](https://github.com/lperezmo/epistasis-v2/commit/e03791c47cd95f5a4674a55a524cf85cad277a8c))
+
+EpistasisLinearRegression.fit now detects full-order biallelic libraries with global (Hadamard)
+  encoding and solves OLS in O(n log n) via the Fast Walsh-Hadamard Transform, skipping dense matrix
+  construction and the sklearn solver. The check is bitmask-based: genotype bitmasks must cover [0,
+  2^L) bijectively and site bitmasks must do the same. Any mismatch (partial library, truncated
+  order, local encoding, multi-allelic positions, duplicate bits inside a site) returns None from
+  fwht_ols_coefficients and the sklearn path takes over unchanged.
+
+The new epistasis.fast module exposes fwht_ols_coefficients as a reusable utility. After a
+  successful FWHT fit the code syncs the sklearn estimator's fitted attributes (coef_, intercept_,
+  n_features_in_) so predict and score continue to work through the existing composition boundary.
+  Standard errors are NaN because the system is exactly determined.
+
+Benchmarked on the Windows workstation: full-order fit at L=10 drops from 292 ms (np.linalg.lstsq)
+  to 0.78 ms, and L=12 drops from 15.4 s to 3.4 ms. The speedup is qualitative (log n vs n^2 in the
+  solve) and scales further with L.
+
+
 ## v1.0.0 (2026-04-20)
 
 ### Build System
