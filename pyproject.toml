@@ -65,7 +65,10 @@ manifest-path = "crates/epistasis-core/Cargo.toml"
 features = ["pyo3/extension-module"]
 
 [tool.semantic_release]
-version_toml = ["pyproject.toml:project.version"]
+version_toml = [
+    "pyproject.toml:project.version",
+    "Cargo.toml:workspace.package.version",
+]
 version_variables = ["python/epistasis/_version.py:__version__"]
 tag_format = "v{version}"
 commit_message = "chore(release): v{version}"

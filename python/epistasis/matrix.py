@@ -2,11 +2,12 @@
 
 Consumes `binary_packed` uint8 2D arrays (shape `(n_genotypes, n_bits)`) from
 gpmap-v2 and produces the encoded-vector matrix and the epistasis design matrix
-for a given list of interaction sites.
+for a given list of interaction sites. The numerical work happens in the Rust
+extension `epistasis._core`; this module validates inputs, flattens the ragged
+sites list, and wraps the output for pandas-consuming callers.
 
-The NumPy implementation here is the correctness reference. The Rust kernel in
-`epistasis._core` takes over in Phase 2; until then this path is what every
-downstream fit uses.
+A pure-NumPy reference lives in `epistasis._reference` and is used only by the
+test suite to cross-check the Rust kernel.
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ from typing import Literal
 import numpy as np
 import pandas as pd
 
+from epistasis import _core
 from epistasis.mapping import Site
 
 __all__ = [
@@ -27,17 +29,6 @@ __all__ = [
 ]
 
 ModelType = Literal["global", "local"]
-
-
-def _validate_binary_packed(binary_packed: np.ndarray) -> None:
-    if binary_packed.ndim != 2:
-        raise ValueError(
-            f"binary_packed must be 2D (n_genotypes, n_bits); got ndim={binary_packed.ndim}."
-        )
-    if binary_packed.dtype != np.uint8:
-        raise ValueError(f"binary_packed must have dtype uint8; got dtype={binary_packed.dtype}.")
-    if np.any((binary_packed != 0) & (binary_packed != 1)):
-        raise ValueError("binary_packed entries must be 0 or 1.")
 
 
 def encode_vectors(
@@ -62,20 +53,35 @@ def encode_vectors(
     encoded : np.ndarray[int8]
         Shape `(n_genotypes, n_bits + 1)`. Column 0 is the intercept.
     """
-    _validate_binary_packed(binary_packed)
+    if binary_packed.ndim != 2:
+        raise ValueError(
+            f"binary_packed must be 2D (n_genotypes, n_bits); got ndim={binary_packed.ndim}."
+        )
+    if binary_packed.dtype != np.uint8:
+        raise ValueError(f"binary_packed must have dtype uint8; got dtype={binary_packed.dtype}.")
+    bp = np.ascontiguousarray(binary_packed)
+    return _core.encode_vectors(bp, model_type)
 
-    n, n_bits = binary_packed.shape
-    encoded = np.empty((n, n_bits + 1), dtype=np.int8)
-    encoded[:, 0] = 1
 
-    if model_type == "global":
-        encoded[:, 1:] = 1 - 2 * binary_packed.astype(np.int8)
-    elif model_type == "local":
-        encoded[:, 1:] = binary_packed.astype(np.int8)
-    else:
-        raise ValueError(f"model_type must be 'global' or 'local'; got {model_type!r}.")
+def _flatten_sites(sites: Sequence[Site]) -> tuple[np.ndarray, np.ndarray]:
+    """Pack a ragged list of sites into flat indices + offsets arrays.
 
-    return encoded
+    Returns `(sites_flat, sites_offsets)` with dtypes int64 and int64.
+    `sites_offsets[j]..sites_offsets[j + 1]` slices `sites_flat` for site `j`.
+    """
+    lengths = [len(s) for s in sites]
+    total = sum(lengths)
+    flat = np.empty(total, dtype=np.int64)
+    offsets = np.empty(len(sites) + 1, dtype=np.int64)
+    offsets[0] = 0
+    cursor = 0
+    for j, site in enumerate(sites):
+        n = len(site)
+        if n:
+            flat[cursor : cursor + n] = np.asarray(site, dtype=np.int64)
+        cursor += n
+        offsets[j + 1] = cursor
+    return flat, offsets
 
 
 def build_model_matrix(
@@ -102,22 +108,11 @@ def build_model_matrix(
     """
     if encoded.ndim != 2:
         raise ValueError(f"encoded must be 2D; got ndim={encoded.ndim}.")
-    n, vec_len = encoded.shape
-    m = len(sites)
-
-    X = np.empty((n, m), dtype=np.int8)
-    for j, site in enumerate(sites):
-        if len(site) == 0:
-            raise ValueError(f"site at index {j} is empty.")
-        idx = np.asarray(site, dtype=np.intp)
-        if idx.min() < 0 or idx.max() >= vec_len:
-            raise ValueError(f"site {site} has index out of range for encoded width {vec_len}.")
-        if idx.shape[0] == 1:
-            X[:, j] = encoded[:, idx[0]]
-        else:
-            X[:, j] = np.prod(encoded[:, idx], axis=1).astype(np.int8)
-
-    return X
+    if encoded.dtype != np.int8:
+        raise ValueError(f"encoded must have dtype int8; got dtype={encoded.dtype}.")
+    enc = np.ascontiguousarray(encoded)
+    flat, offsets = _flatten_sites(sites)
+    return _core.build_model_matrix(enc, flat, offsets)
 
 
 def get_model_matrix(
