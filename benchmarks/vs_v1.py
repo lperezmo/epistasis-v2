@@ -5,7 +5,8 @@ v1 vs v2 comparison from the README, run it twice in separate environments:
 
     # v1 environment
     uv venv .venv-v1 --python 3.11
-    uv pip install --python .venv-v1/Scripts/python.exe numpy scipy scikit-learn pandas lmfit matplotlib emcee gpmap==0.7.0
+    uv pip install --python .venv-v1/Scripts/python.exe \
+        numpy scipy scikit-learn pandas lmfit matplotlib emcee gpmap==0.7.0
     # copy epistasis 0.7.5 pure-Python source into .venv-v1/Lib/site-packages/epistasis
     .venv-v1/Scripts/python vs_v1.py
 
@@ -72,7 +73,7 @@ print("fit() order=1")
 fit_order1: dict[str, float] = {}
 for L in SIZES_ORDER1:
     gpm = make_gpm(L)
-    t = best_ms(lambda: fit(gpm, 1), N_REPEATS)
+    t = best_ms(lambda g=gpm: fit(g, 1), N_REPEATS)
     fit_order1[f"L{L}"] = round(t, 4)
     print(f"  L={L:2d} ({2**L:6d} genotypes): {t:.3f} ms")
 results["results"]["fit_order1_ms"] = fit_order1
@@ -81,7 +82,7 @@ print("fit() full order")
 fit_full: dict[str, float] = {}
 for L in SIZES_FULL:
     gpm = make_gpm(L)
-    t = best_ms(lambda: fit(gpm, L), N_REPEATS)
+    t = best_ms(lambda g=gpm, k=L: fit(g, k), N_REPEATS)
     fit_full[f"L{L}"] = round(t, 4)
     print(f"  L={L:2d} ({2**L:6d} genotypes): {t:.3f} ms")
 results["results"]["fit_full_ms"] = fit_full
