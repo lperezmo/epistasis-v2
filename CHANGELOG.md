@@ -1,6 +1,72 @@
 # CHANGELOG
 
 
+## v1.1.1 (2026-05-03)
+
+### Bug Fixes
+
+- **benchmarks**: Bind loop variables in lambdas and wrap long docstring line
+  ([`d0875cf`](https://github.com/lperezmo/epistasis-v2/commit/d0875cfa9702810b8d8edec185386fabc839cef6))
+
+### Chores
+
+- Add badges, v1 vs v2 benchmark tables, and benchmarks/vs_v1.py
+  ([`928ac55`](https://github.com/lperezmo/epistasis-v2/commit/928ac558624a039841abe5b1b11f125ee06f0ef6))
+
+- **examples**: Add Streamlit showcase app
+  ([`1e537c5`](https://github.com/lperezmo/epistasis-v2/commit/1e537c5273f557969a5da80e05a4bec8439ac118))
+
+Multi-page demo under examples/, patterned after the streamlit-aggrid-v2 showcase. Seven pages:
+
+- Overview: 3D hypercube of sequence space with phenotype-colored vertices, switchable between L=3
+  and L=4 (tesseract projection). - Design matrix: interactive L / order / encoding, Plotly heatmaps
+  of X and X^T X to show Hadamard orthogonality. - Linear fit: simulate known coefficients, fit,
+  scatter predicted vs observed, coefficient bars with analytic OLS stderrs. - FWHT fast path: live
+  benchmark of dense lstsq against fwht_ols_coefficients, asymptotic-cost curves, L slider capped at
+  12. - Simulate: synthetic GPM from simulate_random_linear_gpm, phenotype histogram, genotype
+  preview. - Cross validation: per-fold R^2 bars from epistasis.validate.k_fold. - About: install,
+  links, credits.
+
+Visual notes:
+
+- Navigation via st.navigation in sidebar groups with Material icons. - Gradient h2 header via
+  st.html instead of st.title. - Tailwind teal + indigo palette in a shared plots.py helper; rose
+  for negative-signed heatmaps; consistent modebar config across figures. - st.markdown + st.caption
+  for headings per project convention. - width="stretch" replaces use_container_width (deprecated
+  after 2025-12-31).
+
+Dependencies live only in examples/requirements.txt so they do not contaminate the core dev or CI
+  loops. examples/README.md carries the Open-in-Streamlit badge and run instructions; the top-level
+  README links to the hosted app at epistasis-v2.streamlit.app.
+
+The lock-file touches are the semantic-release v1.1.0 version bump catching up locally.
+
+- **streamlit**: Dark/light theme support, interaction site grid, examples dep group
+  ([`cff6dd1`](https://github.com/lperezmo/epistasis-v2/commit/cff6dd16fbb411f3174768f7cf3e3e8d4f20c157))
+
+### Continuous Integration
+
+- Bump actions off Node.js 20 before the Sept 2026 cutoff
+  ([`e579661`](https://github.com/lperezmo/epistasis-v2/commit/e57966192d64f339b730fee3ffb82f8c1984dfc8))
+
+GitHub is forcing Node.js 24 as the default starting June 2026 and removing Node.js 20 from runners
+  in September 2026. The current release leaves deprecation annotations on every run. Mirroring the
+  versions streamlit-aggrid already moved to:
+
+- actions/checkout: v4 -> v6 - actions/setup-python: v5 -> v6 - actions/upload-artifact: v4 -> v7 -
+  actions/download-artifact: v4 -> v7 - astral-sh/setup-uv: v3 -> v8 - codecov/codecov-action: v4 ->
+  v6
+
+PyO3/maturin-action stays on v1 (still the current major) and dtolnay/rust-toolchain stays pinned to
+  @stable.
+
+- Pin setup-uv to v8.1.0
+  ([`ad5cd96`](https://github.com/lperezmo/epistasis-v2/commit/ad5cd964cfe491379a81455173dcafbc092a649a))
+
+astral-sh/setup-uv does not publish a floating v8 tag yet (only v7.x has major-minor shortcuts).
+  Pinning to the full v8.1.0 tag so the resolver actually finds it.
+
+
 ## v1.1.0 (2026-04-20)
 
 ### Documentation
