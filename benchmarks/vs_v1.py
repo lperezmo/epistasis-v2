@@ -17,6 +17,7 @@ Operations timed:
   fit_order1  -- order-1 linear regression (sklearn lstsq)
   fit_full    -- full-order regression (v2: FWHT O(N log N); v1: dense lstsq)
 """
+
 from __future__ import annotations
 
 import itertools

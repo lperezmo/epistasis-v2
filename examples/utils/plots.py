@@ -39,6 +39,7 @@ HEATMAP_MAGNITUDE = [
 def _is_dark() -> bool:
     try:
         import streamlit as st
+
         return st.context.theme.type == "dark"
     except Exception:
         return False
