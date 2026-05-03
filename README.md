@@ -1,5 +1,9 @@
 # epistasis-v2
 
+[![CI](https://github.com/lperezmo/epistasis-v2/actions/workflows/ci.yml/badge.svg)](https://github.com/lperezmo/epistasis-v2/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/epistasis-v2.svg)](https://pypi.org/project/epistasis-v2/)
+[![Python](https://img.shields.io/pypi/pyversions/epistasis-v2.svg)](https://pypi.org/project/epistasis-v2/)
+[![License](https://img.shields.io/badge/license-Unlicense-blue.svg)](UNLICENSE)
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://epistasis-v2.streamlit.app/)
 
 High-performance Python library for fitting high-order epistatic interactions in genotype-phenotype maps. A clean-break rewrite of [harmslab/epistasis](https://github.com/harmslab/epistasis).
@@ -80,15 +84,46 @@ Rust hot-path kernels in `epistasis._core`:
 - `build_model_matrix` (parallel site-product over genotype rows; flat ragged sites layout)
 - `fwht` (iterative butterfly Fast Walsh-Hadamard Transform)
 
-Benchmarks (release build, Windows, 16 threads; see `benches/`):
+## Benchmarks vs v1
 
-| kernel                               | input                 | Rust      | NumPy reference | speedup |
-|--------------------------------------|-----------------------|-----------|-----------------|---------|
-| `build_model_matrix`                 | L=12, order=3         | 1.7 ms    | 10.1 ms         | ~6x     |
-| `build_model_matrix`                 | L=16, order=3         | 50 ms     | 283 ms          | ~5.7x   |
-| `encode_vectors`                     | L=16 (65k genotypes)  | 1.06 ms   | 3.24 ms         | ~3x     |
-| `EpistasisLinearRegression.fit`      | full-order L=10       | 0.78 ms   | 292 ms (lstsq)  | ~375x   |
-| `EpistasisLinearRegression.fit`      | full-order L=12       | 3.4 ms    | 15.4 s (lstsq)  | ~4500x  |
+Measured on Windows 11 against `epistasis==0.7.5` + `gpmap==0.7.0`. Full biallelic
+space (`AT` alphabet), `timeit` best-of-5. See [`benchmarks/vs_v1.py`](benchmarks/vs_v1.py)
+for reproducible scripts and setup instructions.
+
+> **Note on v1 times:** the Cython extension in `epistasis 0.7.5` requires MSVC to compile
+> and produced no pre-built Windows wheel; times below use the pure-Python fallback, which
+> is slower than actual v1+Cython. Even so, the FWHT fast path in v2 is orders of magnitude
+> faster at full order.
+
+### fit() order=1 (sklearn lstsq path in both versions)
+
+| L | genotypes | v1 (ms) | v2 (ms) | speedup |
+|---|-----------|---------|---------|---------|
+| 8 | 256 | 12.98 | 1.81 | 7x |
+| 10 | 1,024 | 44.07 | 2.02 | 22x |
+| 12 | 4,096 | 183.13 | 2.61 | 70x |
+| 14 | 16,384 | 807.37 | 5.08 | 159x |
+| 16 | 65,536 | 3,771.14 | 19.35 | 195x |
+
+### fit() full order (v1: dense lstsq, v2: FWHT O(N log N))
+
+| L | genotypes | v1 (ms) | v2 (ms) | speedup |
+|---|-----------|---------|---------|---------|
+| 8 | 256 | 195.16 | 1.75 | 111x |
+| 10 | 1,024 | 3,004.81 | 3.10 | 969x |
+| 12 | 4,096 | 59,344.00 | 8.97 | >6,000x |
+| 14 | 16,384 | (hours) | 35.50 | |
+| 16 | 65,536 | (hours) | 154.15 | |
+
+### Rust kernel vs NumPy reference (internal; release build, 16 threads; see `benches/`)
+
+| kernel | input | Rust | NumPy reference | speedup |
+|--------|-------|------|-----------------|---------|
+| `build_model_matrix` | L=12, order=3 | 1.7 ms | 10.1 ms | ~6x |
+| `build_model_matrix` | L=16, order=3 | 50 ms | 283 ms | ~5.7x |
+| `encode_vectors` | L=16 (65k genotypes) | 1.06 ms | 3.24 ms | ~3x |
+| `EpistasisLinearRegression.fit` | full-order L=10 | 0.78 ms | 292 ms (lstsq) | ~375x |
+| `EpistasisLinearRegression.fit` | full-order L=12 | 3.4 ms | 15.4 s (lstsq) | ~4500x |
 
 Pending:
 
