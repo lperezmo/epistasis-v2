@@ -5,7 +5,15 @@ from __future__ import annotations
 import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
-from utils.plots import INDIGO, PLOTLY_CONFIG, ROSE, TEAL, apply_theme
+from utils.plots import (
+    INDIGO,
+    PLOTLY_CONFIG,
+    ROSE,
+    TEAL,
+    _is_dark,
+    apply_theme,
+    interaction_site_grid,
+)
 
 
 def render() -> None:
@@ -68,13 +76,14 @@ def render() -> None:
     st.markdown("##### Predicted vs observed")
     with st.container(border=True):
         lims = [float(min(y_obs.min(), y_pred.min())), float(max(y_obs.max(), y_pred.max()))]
+        ref_line_color = "#475569" if _is_dark() else "#cbd5e1"
         pv = go.Figure()
         pv.add_trace(
             go.Scatter(
                 x=lims,
                 y=lims,
                 mode="lines",
-                line=dict(color="#cbd5e1", width=1, dash="dash"),
+                line=dict(color=ref_line_color, width=1, dash="dash"),
                 hoverinfo="skip",
                 showlegend=False,
             )
@@ -152,6 +161,17 @@ def render() -> None:
                 "Standard errors are undefined when the system is exactly "
                 "determined (n == p). Use a truncated order to see finite bars."
             )
+
+    st.markdown("##### Interaction site participation")
+    st.caption(
+        "Each column is an interaction term; each row is a site. "
+        "A cell is filled when that site participates in the term. "
+        "Colour encodes the fitted coefficient magnitude."
+    )
+    with st.container(border=True):
+        grid_fig = interaction_site_grid(sites, beta_hat, L=L)
+        apply_theme(grid_fig)
+        st.plotly_chart(grid_fig, width="stretch", config=PLOTLY_CONFIG)
 
     with st.expander("Code", icon=":material/code:"):
         st.code(

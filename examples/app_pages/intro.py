@@ -7,7 +7,7 @@ import itertools as it
 import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
-from utils.plots import INDIGO, PLOTLY_CONFIG, TEAL, TEAL_DARK, apply_theme
+from utils.plots import INDIGO, PLOTLY_CONFIG, TEAL, TEAL_DARK, _is_dark, apply_theme
 
 
 def _hypercube_positions(L: int) -> np.ndarray:
@@ -104,7 +104,7 @@ def render() -> None:
                 y=edge_y,
                 z=edge_z,
                 mode="lines",
-                line=dict(color="#cbd5e1", width=3),
+                line=dict(color="#334155" if _is_dark() else "#e2e8f0", width=3),
                 hoverinfo="skip",
                 showlegend=False,
             )
@@ -118,7 +118,11 @@ def render() -> None:
                 marker=dict(
                     size=14,
                     color=phenotype,
-                    colorscale=[[0.0, TEAL], [0.5, "#ffffff"], [1.0, INDIGO]],
+                    colorscale=[
+                        [0.0, TEAL],
+                        [0.5, "#1e293b" if _is_dark() else "#f8fafc"],
+                        [1.0, INDIGO],
+                    ],
                     cmin=-float(np.max(np.abs(phenotype))),
                     cmax=float(np.max(np.abs(phenotype))),
                     line=dict(color=TEAL_DARK, width=1),
@@ -131,7 +135,7 @@ def render() -> None:
                 ),
                 text=labels,
                 textposition="top center",
-                textfont=dict(size=11, color="#475569"),
+                textfont=dict(size=11, color="#94a3b8" if _is_dark() else "#475569"),
                 hovertemplate="<b>%{text}</b><br>phenotype=%{marker.color:.3f}<extra></extra>",
                 showlegend=False,
             )
