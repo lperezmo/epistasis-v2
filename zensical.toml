@@ -1,0 +1,81 @@
+[project]
+site_name = "epistasis-v2"
+site_url = "https://lperezmo.github.io/epistasis-v2/"
+site_description = "High-performance Python library for fitting high-order epistatic interactions in genotype-phenotype maps."
+site_author = "Luis Perez"
+copyright = "Copyright &copy; 2026 Luis Perez"
+
+repo_url = "https://github.com/lperezmo/epistasis-v2"
+repo_name = "lperezmo/epistasis-v2"
+edit_uri = "edit/main/docs/"
+
+extra_css = ["stylesheets/extra.css"]
+
+nav = [
+  { "Home" = "index.md" },
+  { "Get Started" = [
+    "quickstart.md",
+    "installation.md",
+  ]},
+  { "Core Concepts" = [
+    "concepts/genotype-phenotype-maps.md",
+    "concepts/epistasis.md",
+    "concepts/design-matrix.md",
+    "concepts/encodings.md",
+  ]},
+  { "Models" = [
+    "models/linear.md",
+    "models/regularized.md",
+    "models/nonlinear.md",
+    "models/classifiers.md",
+  ]},
+  { "Simulation & Validation" = [
+    "guides/simulation.md",
+    "guides/cross-validation.md",
+    "guides/bayesian-sampling.md",
+  ]},
+  { "Reference" = [
+    "reference/stats.md",
+    "reference/fast-path.md",
+    "reference/exceptions.md",
+    "reference/changelog.md",
+  ]},
+]
+
+[project.theme]
+variant = "classic"
+features = [
+  "navigation.tabs",
+  "navigation.tabs.sticky",
+  "navigation.sections",
+  "navigation.top",
+  "navigation.footer",
+  "navigation.indexes",
+  "navigation.tracking",
+  "content.action.edit",
+  "content.action.view",
+  "search.highlight",
+  "search.suggest",
+  "toc.follow",
+]
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/lperezmo/epistasis-v2"
+name = "epistasis-v2 on GitHub"
