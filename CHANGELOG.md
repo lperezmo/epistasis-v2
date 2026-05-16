@@ -1,6 +1,47 @@
 # CHANGELOG
 
 
+## v1.2.0 (2026-05-16)
+
+### Chores
+
+- Apply ruff format to benchmarks and examples/utils/plots
+  ([`270f7bf`](https://github.com/lperezmo/epistasis-v2/commit/270f7bf26e6de3d02006d868563ecd68186df869))
+
+### Features
+
+- Sparse Lasso/ElasticNet, nonlinear GE variants, and remaining classifiers
+  ([`34e0a06`](https://github.com/lperezmo/epistasis-v2/commit/34e0a06e08df8a6dc945589aec2fd8967f538675))
+
+Linear: - New scipy.sparse.csc_matrix design-matrix path for EpistasisLasso and EpistasisElasticNet
+  via a sparse= parameter. sparse="auto" (default) engages for model_type="local" where the per-site
+  product columns are 0/1; pass sparse=True/False to override. Fixes the OOM at L >= 20 where the
+  dense float64 design matrix used to blow up. - get_model_matrix_sparse / build_model_matrix_sparse
+  helpers in epistasis.matrix. Local builds CSC directly column-by-column; global falls back to
+  converting the dense kernel output.
+
+Nonlinear: - EpistasisPowerTransform: Sailer and Harms 2017 Box-Cox-style transform, ported from v1
+  with the training-set geometric-mean reference locked at fit time. - EpistasisSpline:
+  smoothing-spline minimizer via scipy.interpolate.UnivariateSpline with deterministic jitter on
+  duplicate x values. - EpistasisMonotonicGE: modern alternative, a sum of K tanh sigmoids with b_k,
+  c_k >= 0 for monotonicity by construction. Follows Tareen et al. 2022 (MAVE-NN, Genome Biology
+  23:98). Identifiable; avoids the sign ambiguity that hits unconstrained GE fits. - Minimizer gains
+  an abstract param_names property so subclasses can plug into EpistasisNonlinearRegression without
+  type errors.
+
+Classifiers: - EpistasisLDA and EpistasisQDA over the additive-projected design matrix. -
+  EpistasisGaussianProcess wrapping sklearn GaussianProcessClassifier. - EpistasisGaussianMixture:
+  deterministic viable-component assignment by member-phenotype mean. Replaces v1's half-finished
+  GMM. - Base predict_log_proba falls back to log(predict_proba) for sklearn classifiers without a
+  native one (GP).
+
+Tests: 80 new tests across sparse parity, nonlinear-variant round trips, and classifier behavior.
+  Total 352 pass; ruff and mypy --strict clean.
+
+README refreshed: status, "What changed from v1", and ported-modules lists all reflect the landed
+  work; Pending section dropped (Mintlify docs tracked separately).
+
+
 ## v1.1.1 (2026-05-03)
 
 ### Bug Fixes
