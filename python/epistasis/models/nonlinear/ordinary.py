@@ -20,7 +20,7 @@ from epistasis.exceptions import FittingError
 from epistasis.matrix import ModelType
 from epistasis.models.base import EpistasisBaseModel
 from epistasis.models.linear import EpistasisLinearRegression
-from epistasis.models.nonlinear.minimizer import FunctionMinimizer
+from epistasis.models.nonlinear.minimizer import FunctionMinimizer, Minimizer
 
 if TYPE_CHECKING:
     from gpmap import GenotypePhenotypeMap
@@ -52,6 +52,8 @@ class EpistasisNonlinearRegression(EpistasisBaseModel):
         Dict mapping nonlinear-parameter name to its starting value. Parameters
         not listed default to `1.0`.
     """
+
+    minimizer: Minimizer
 
     def __init__(
         self,

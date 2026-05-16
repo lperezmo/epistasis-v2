@@ -8,7 +8,7 @@
 
 High-performance Python library for fitting high-order epistatic interactions in genotype-phenotype maps. A clean-break rewrite of [harmslab/epistasis](https://github.com/harmslab/epistasis).
 
-**Status: alpha.** Phase 1 port, Phase 2 Rust kernel, and the Phase 3 Walsh-Hadamard OLS fast path are all in. Sparse design matrices for high-order Lasso and remaining polish items are still to come.
+**Status: alpha.** Phase 1 port, Phase 2 Rust kernel, the Phase 3 Walsh-Hadamard OLS fast path, sparse design matrices for high-order Lasso/ElasticNet, the power and spline nonlinear variants, a monotonic global-epistasis variant (MAVE-NN style), and the remaining classifiers (LDA / QDA / GP / GMM) are all in.
 
 A multi-page Streamlit showcase lives under [`examples/`](./examples/) and is published at [epistasis-v2.streamlit.app](https://epistasis-v2.streamlit.app/).
 
@@ -20,7 +20,8 @@ A multi-page Streamlit showcase lives under [`examples/`](./examples/) and is pu
 - Type hints on the public API; `mypy --strict` in CI.
 - Composition over `@use_sklearn` MRO injection. Concrete models hold an sklearn estimator as an attribute and forward calls explicitly, which unlocks modern sklearn (>=1.2) that broke the v1 trick when `normalize=` was removed.
 - Walsh-Hadamard fast-path for Hadamard-encoded OLS fits: `O(n log n)` closed-form solve, no dense design matrix. Auto-engaged in `EpistasisLinearRegression.fit` when the attached GPM is a full-order biallelic library under global encoding; everything else falls back to the sklearn path.
-- Sparse design matrix path for Lasso / ElasticNet at high order (pending; a memory concern at `L >= 20`).
+- Sparse design-matrix path for Lasso / ElasticNet via `scipy.sparse.csc_matrix`. `sparse="auto"` (default) engages for `model_type="local"` where the per-site product columns are 0/1; pass `sparse=True` / `False` to override. This is the memory fix for `L >= 20` where the dense float64 design matrix used to OOM.
+- Monotonic global-epistasis variant `EpistasisMonotonicGE` modeled as a sum of `K` tanh sigmoids with `b_k, c_k >= 0`, following Tareen et al. 2022 (MAVE-NN). Identifiable by construction; modern alternative to the power transform when the nonlinearity isn't a clean Box-Cox shape.
 - Coordinated rewrite of the [gpmap](https://github.com/harmslab/gpmap) dependency as [gpmap-v2](https://github.com/lperezmo/gpmap-v2). Consumes `binary_packed` (uint8 2D) and `encoding_table` with `site_index` instead of the deprecated `genotype_index`.
 - No backward compatibility with v1. Pin the v1 package if you need that behavior.
 
@@ -60,7 +61,7 @@ uv run mypy python/epistasis
 
 ## Current progress
 
-Phase 0 (scaffold), Phase 1 (port), Phase 2 (Rust kernels), and most of Phase 3 (FWHT fast path) are complete.
+Phase 0 (scaffold), Phase 1 (port), Phase 2 (Rust kernels), and Phase 3 (FWHT fast path + sparse design matrices for Lasso/ElasticNet) are complete.
 
 Ported modules:
 
@@ -69,9 +70,9 @@ Ported modules:
 - `epistasis.exceptions` (`EpistasisError`, `XMatrixError`, `FittingError`)
 - `epistasis.utils` (`genotypes_to_X`)
 - `epistasis.models.base` (`AbstractEpistasisModel`, `EpistasisBaseModel`)
-- `epistasis.models.linear` (`EpistasisLinearRegression` with analytic coefficient standard errors and a Walsh-Hadamard fast path for full-order biallelic fits, `EpistasisRidge`, `EpistasisLasso`, `EpistasisElasticNet`)
-- `epistasis.models.nonlinear` (`EpistasisNonlinearRegression`, `FunctionMinimizer`; `power` and `spline` variants deferred)
-- `epistasis.models.classifiers` (`EpistasisLogisticRegression`; LDA, QDA, Gaussian Process, and GMM deferred)
+- `epistasis.models.linear` (`EpistasisLinearRegression` with analytic coefficient standard errors and a Walsh-Hadamard fast path for full-order biallelic fits, `EpistasisRidge`, `EpistasisLasso` and `EpistasisElasticNet` with an auto-engaged `scipy.sparse` design-matrix path)
+- `epistasis.models.nonlinear` (`EpistasisNonlinearRegression`, `FunctionMinimizer`, `EpistasisPowerTransform` (Sailer & Harms 2017), `EpistasisSpline` (smoothing spline via `scipy.interpolate.UnivariateSpline`), `EpistasisMonotonicGE` (monotone tanh-sum global epistasis, Tareen et al. 2022))
+- `epistasis.models.classifiers` (`EpistasisLogisticRegression`, `EpistasisLDA`, `EpistasisQDA`, `EpistasisGaussianProcess`, `EpistasisGaussianMixture`)
 - `epistasis.simulate` (`simulate_linear_gpm`, `simulate_random_linear_gpm`)
 - `epistasis.stats` (Pearson, R^2, RMSD, SS residuals, AIC, `split_gpm`)
 - `epistasis.validate` (`k_fold`, `holdout`)
@@ -124,13 +125,6 @@ for reproducible scripts and setup instructions.
 | `encode_vectors` | L=16 (65k genotypes) | 1.06 ms | 3.24 ms | ~3x |
 | `EpistasisLinearRegression.fit` | full-order L=10 | 0.78 ms | 292 ms (lstsq) | ~375x |
 | `EpistasisLinearRegression.fit` | full-order L=12 | 3.4 ms | 15.4 s (lstsq) | ~4500x |
-
-Pending:
-
-- Sparse design matrix path for Lasso / ElasticNet (memory at L >= 20)
-- `power.py` and `spline.py` nonlinear variants
-- Remaining classifier implementations if demand surfaces
-- ReadTheDocs build
 
 ## Contributing
 

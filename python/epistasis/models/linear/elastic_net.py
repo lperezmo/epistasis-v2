@@ -5,7 +5,7 @@ from __future__ import annotations
 from sklearn.linear_model import ElasticNet
 
 from epistasis.matrix import ModelType
-from epistasis.models.linear._regularized import RegularizedLinearBase
+from epistasis.models.linear._regularized import RegularizedLinearBase, SparseMode
 
 __all__ = ["EpistasisElasticNet"]
 
@@ -31,7 +31,8 @@ class EpistasisElasticNet(RegularizedLinearBase):
     l1_ratio
         In [0, 1]. Fraction of penalty that is L1; the remainder is L2.
     precompute
-        Whether to use a precomputed Gram matrix.
+        Whether to use a precomputed Gram matrix. Ignored when the sparse
+        path is active.
     max_iter
         Maximum coordinate-descent iterations.
     tol
@@ -44,6 +45,10 @@ class EpistasisElasticNet(RegularizedLinearBase):
         `"cyclic"` or `"random"`.
     random_state
         Seed used when `selection="random"`.
+    sparse
+        Build the design matrix as `scipy.sparse.csc_matrix`. `"auto"`
+        (default) engages sparse only for `model_type="local"`. See
+        `EpistasisLasso` for the rationale.
     """
 
     def __init__(
@@ -59,10 +64,12 @@ class EpistasisElasticNet(RegularizedLinearBase):
         positive: bool = False,
         selection: str = "cyclic",
         random_state: int | None = None,
+        sparse: SparseMode = "auto",
     ) -> None:
         super().__init__(order=order, model_type=model_type)
         if not 0.0 <= l1_ratio <= 1.0:
             raise ValueError(f"l1_ratio must be in [0, 1]; got {l1_ratio}.")
+        self._sparse = sparse
         self._sklearn = ElasticNet(
             alpha=alpha,
             l1_ratio=l1_ratio,

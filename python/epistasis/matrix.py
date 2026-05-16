@@ -17,14 +17,17 @@ from typing import Literal
 
 import numpy as np
 import pandas as pd
+from scipy.sparse import csc_matrix
 
 from epistasis import _core
 from epistasis.mapping import Site
 
 __all__ = [
     "build_model_matrix",
+    "build_model_matrix_sparse",
     "encode_vectors",
     "get_model_matrix",
+    "get_model_matrix_sparse",
     "model_matrix_as_dataframe",
 ]
 
@@ -123,6 +126,80 @@ def get_model_matrix(
     """Convenience: `encode_vectors` followed by `build_model_matrix`."""
     encoded = encode_vectors(binary_packed, model_type=model_type)
     return build_model_matrix(encoded, sites)
+
+
+def build_model_matrix_sparse(
+    encoded: np.ndarray,
+    sites: Sequence[Site],
+    model_type: ModelType = "global",
+) -> csc_matrix:
+    """Build the epistasis design matrix as a `scipy.sparse.csc_matrix`.
+
+    For `local` encoding the per-site product columns are 0/1 and only the
+    nonzero rows are materialized, so the working set scales with the number
+    of nonzeros rather than `n_genotypes * n_sites`. This is the memory-saving
+    path enabled by Lasso/ElasticNet when `sparse=True` (or `sparse="auto"`
+    on a local-encoded GPM).
+
+    For `global` (Hadamard) encoding every entry is `+/-1`, so the design
+    matrix has no exploitable sparsity; we still construct a CSC matrix from
+    the dense build for API uniformity, but at higher memory cost than the
+    dense form. Prefer dense for `global`.
+
+    Parameters
+    ----------
+    encoded
+        Output of `encode_vectors`, shape `(n_genotypes, n_bits + 1)`,
+        dtype int8.
+    sites
+        List of interaction sites (tuples of column indices into `encoded`).
+    model_type
+        Must match the `model_type` used to build `encoded`. Used to pick the
+        construction strategy.
+    """
+    if encoded.ndim != 2:
+        raise ValueError(f"encoded must be 2D; got ndim={encoded.ndim}.")
+    if encoded.dtype != np.int8:
+        raise ValueError(f"encoded must have dtype int8; got dtype={encoded.dtype}.")
+
+    n_rows = encoded.shape[0]
+    n_cols = len(sites)
+
+    if model_type == "local":
+        indptr = np.empty(n_cols + 1, dtype=np.int64)
+        indptr[0] = 0
+        col_rows: list[np.ndarray] = []
+        for j, site in enumerate(sites):
+            if len(site) == 0:
+                rows = np.arange(n_rows, dtype=np.int64)
+            else:
+                mask = encoded[:, site[0]] == 1
+                for c in site[1:]:
+                    mask &= encoded[:, c] == 1
+                rows = np.flatnonzero(mask).astype(np.int64, copy=False)
+            col_rows.append(rows)
+            indptr[j + 1] = indptr[j] + rows.shape[0]
+        total = int(indptr[-1])
+        indices = np.empty(total, dtype=np.int64)
+        cursor = 0
+        for rows in col_rows:
+            indices[cursor : cursor + rows.shape[0]] = rows
+            cursor += rows.shape[0]
+        data = np.ones(total, dtype=np.float64)
+        return csc_matrix((data, indices, indptr), shape=(n_rows, n_cols))
+
+    dense = build_model_matrix(encoded, sites)
+    return csc_matrix(dense.astype(np.float64, copy=False))
+
+
+def get_model_matrix_sparse(
+    binary_packed: np.ndarray,
+    sites: Sequence[Site],
+    model_type: ModelType = "global",
+) -> csc_matrix:
+    """Convenience: `encode_vectors` followed by `build_model_matrix_sparse`."""
+    encoded = encode_vectors(binary_packed, model_type=model_type)
+    return build_model_matrix_sparse(encoded, sites, model_type=model_type)
 
 
 def model_matrix_as_dataframe(

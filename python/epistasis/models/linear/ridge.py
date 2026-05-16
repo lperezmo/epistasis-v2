@@ -47,6 +47,7 @@ class EpistasisRidge(RegularizedLinearBase):
         random_state: int | None = None,
     ) -> None:
         super().__init__(order=order, model_type=model_type)
+        self._sparse = False
         self._sklearn = Ridge(
             alpha=alpha,
             fit_intercept=False,

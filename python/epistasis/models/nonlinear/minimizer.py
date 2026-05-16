@@ -40,6 +40,15 @@ class Minimizer(ABC):
     def fit(self, x: np.ndarray, y: np.ndarray) -> None:
         """Fit the function to `(x, y)`."""
 
+    @property
+    @abstractmethod
+    def param_names(self) -> list[str]:
+        """Ordered names of the function's free parameters.
+
+        Used by `EpistasisNonlinearRegression` to pack the fitted parameter
+        values into the `thetas` vector.
+        """
+
 
 class FunctionMinimizer(Minimizer):
     """Wraps a user-provided Python function and fits it via `lmfit.minimize`.

@@ -102,8 +102,15 @@ class EpistasisClassifierBase(EpistasisBaseModel):
         return np.asarray(self._sklearn.predict_proba(X_proj), dtype=np.float64)
 
     def predict_log_proba(self, X: Any = None) -> np.ndarray:
-        X_proj = self._projected_X(X)
-        return np.asarray(self._sklearn.predict_log_proba(X_proj), dtype=np.float64)
+        # Not every sklearn classifier exposes a native predict_log_proba
+        # (e.g. GaussianProcessClassifier). Fall back to log(predict_proba)
+        # with a small floor to avoid log(0).
+        if hasattr(self._sklearn, "predict_log_proba"):
+            X_proj = self._projected_X(X)
+            return np.asarray(self._sklearn.predict_log_proba(X_proj), dtype=np.float64)
+        proba = self.predict_proba(X=X)
+        out: np.ndarray = np.log(np.clip(proba, 1e-300, None))
+        return out
 
     def score(self, X: Any = None, y: Any = None) -> float:
         X_proj = self._projected_X(X)
