@@ -9,7 +9,6 @@ import plotly.graph_objects as go
 import streamlit as st
 from utils.plots import INDIGO, PLOTLY_CONFIG, TEAL, TEAL_DARK, _is_dark, apply_theme
 
-
 _NESTED_CORNERS = (
     (0.5, 0.5, 0.5),
     (0.0, 0.0, 0.5),
