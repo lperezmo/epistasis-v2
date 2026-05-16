@@ -42,6 +42,9 @@ coverage.xml
 # Maturin build artifacts
 wheels/
 
+# Zensical built site
+site/
+
 # OS
 .DS_Store
 Thumbs.db

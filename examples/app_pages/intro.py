@@ -9,19 +9,37 @@ import plotly.graph_objects as go
 import streamlit as st
 from utils.plots import INDIGO, PLOTLY_CONFIG, TEAL, TEAL_DARK, _is_dark, apply_theme
 
+_NESTED_CORNERS = (
+    (0.5, 0.5, 0.5),
+    (0.0, 0.0, 0.5),
+    (0.5, 0.0, 0.0),
+    (0.0, 0.5, 0.0),
+)
+
 
 def _hypercube_positions(L: int) -> np.ndarray:
-    """Project vertices of an L-cube into 3D."""
+    """Project vertices of an L-cube into 3D.
+
+    L=3 places vertices at the corners of the unit cube. For L>=4, each extra
+    bit k selects a distinct nested 3-cube anchored at a different corner of
+    the parent cube (see ``_NESTED_CORNERS``) and shrunk by ``s``. Picking
+    different corners per k guarantees all 2^L projected vertices are unique.
+    """
+    if not 3 <= L <= 7:
+        raise ValueError(f"L must be between 3 and 7 for the hypercube viz; got {L}.")
+
     binary = np.array(list(it.product([0, 1], repeat=L)), dtype=float)
-    if L == 3:
-        return binary
-    if L == 4:
-        # Tesseract projection: bit 3 selects an inner cube, shrunk and offset.
-        outer = binary[:, :3]
-        inner_scale = np.where(binary[:, 3] == 1, 0.45, 1.0)[:, None]
-        inner_offset = np.where(binary[:, 3] == 1, 0.275, 0.0)[:, None]
-        return inner_scale * outer + inner_offset
-    raise ValueError(f"L must be 3 or 4 for the hypercube viz; got {L}.")
+    positions = binary[:, :3].copy()
+
+    s = 0.45
+    for k in range(3, L):
+        bit_k = binary[:, k]
+        corner = np.array(_NESTED_CORNERS[k - 3], dtype=float)
+        scale_col = np.where(bit_k == 1, s, 1.0)[:, None]
+        offset_col = np.where(bit_k == 1, 1.0, 0.0)[:, None] * (corner * (1.0 - s))
+        positions = scale_col * positions + offset_col
+
+    return positions
 
 
 def _hypercube_edges(L: int) -> list[tuple[int, int]]:
@@ -74,7 +92,7 @@ def render() -> None:
     with st.container(border=True):
         col1, col2, col3 = st.columns([1, 2, 1])
         with col1:
-            L = st.radio("Dimension", [3, 4], horizontal=True, key="intro_L")
+            L = st.radio("Dimension", [3, 4, 5, 6, 7], horizontal=True, key="intro_L")
         with col2:
             model = st.selectbox(
                 "Phenotype structure",
@@ -97,6 +115,12 @@ def render() -> None:
             edge_y.extend([positions[i, 1], positions[j, 1], None])
             edge_z.extend([positions[i, 2], positions[j, 2], None])
 
+        # Tune density-sensitive visuals: fewer pixels per vertex at higher L,
+        # and drop the per-vertex labels once they would overlap (L >= 5).
+        edge_width = 3 if L <= 4 else 2 if L == 5 else 1
+        marker_size = 14 if L <= 4 else 9 if L == 5 else 6 if L == 6 else 4
+        marker_mode = "markers+text" if L <= 4 else "markers"
+
         fig = go.Figure()
         fig.add_trace(
             go.Scatter3d(
@@ -104,7 +128,7 @@ def render() -> None:
                 y=edge_y,
                 z=edge_z,
                 mode="lines",
-                line=dict(color="#334155" if _is_dark() else "#e2e8f0", width=3),
+                line=dict(color="#334155" if _is_dark() else "#e2e8f0", width=edge_width),
                 hoverinfo="skip",
                 showlegend=False,
             )
@@ -114,9 +138,9 @@ def render() -> None:
                 x=positions[:, 0],
                 y=positions[:, 1],
                 z=positions[:, 2],
-                mode="markers+text",
+                mode=marker_mode,
                 marker=dict(
-                    size=14,
+                    size=marker_size,
                     color=phenotype,
                     colorscale=[
                         [0.0, TEAL],
