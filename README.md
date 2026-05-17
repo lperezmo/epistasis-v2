@@ -1,6 +1,7 @@
 # epistasis-v2
 
 [![CI](https://github.com/lperezmo/epistasis-v2/actions/workflows/ci.yml/badge.svg)](https://github.com/lperezmo/epistasis-v2/actions/workflows/ci.yml)
+[![Documentation](https://github.com/lperezmo/epistasis-v2/actions/workflows/docs.yml/badge.svg)](https://lperezmo.github.io/epistasis-v2/)
 [![PyPI](https://img.shields.io/pypi/v/epistasis-v2.svg)](https://pypi.org/project/epistasis-v2/)
 [![Python](https://img.shields.io/pypi/pyversions/epistasis-v2.svg)](https://pypi.org/project/epistasis-v2/)
 [![License](https://img.shields.io/badge/license-Unlicense-blue.svg)](UNLICENSE)
