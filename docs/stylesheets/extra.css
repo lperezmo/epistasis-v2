@@ -1,14 +1,44 @@
-:root > * {
-  --md-primary-fg-color:        #848c8e;
-  --md-primary-fg-color--light:  #cfd0d2;
-  --md-primary-fg-color--dark:   #5d6466;
-  --md-accent-fg-color:          #5d6466;
+/* epistasis-v2 docs: modern Zensical theme with orange accents to mirror zensical.org */
+
+:root {
+    --md-primary-fg-color: #1f1f1f;
+    --md-primary-fg-color--light: #2a2a2a;
+    --md-primary-fg-color--dark: #0f0f0f;
+    --md-primary-bg-color: #ffffff;
+    --md-primary-bg-color--light: #f4f4f4;
+    --md-accent-fg-color: #ff6a00;
+    --md-accent-fg-color--transparent: rgba(255, 106, 0, 0.1);
+    --md-accent-bg-color: #ffffff;
+    --md-accent-bg-color--light: #fff3e6;
 }
 
 [data-md-color-scheme="slate"] {
-  --md-primary-fg-color:        #848c8e;
-  --md-primary-fg-color--light:  #b5babc;
-  --md-primary-fg-color--dark:   #11161e;
-  --md-accent-fg-color:          #cfd0d2;
-  --md-default-bg-color:         #11161e;
+    --md-primary-fg-color: #0f1115;
+    --md-primary-fg-color--light: #181b21;
+    --md-primary-fg-color--dark: #07080a;
+    --md-primary-bg-color: #0c0e12;
+    --md-primary-bg-color--light: #14171c;
+    --md-default-bg-color: #0c0e12;
+    --md-accent-fg-color: #ff7a1a;
+    --md-accent-fg-color--transparent: rgba(255, 122, 26, 0.15);
+    --md-accent-bg-color: #ffffff;
+    --md-accent-bg-color--light: rgba(255, 122, 26, 0.1);
+    --md-typeset-a-color: #ff7a1a;
+}
+
+.md-typeset a:hover {
+    color: var(--md-accent-fg-color);
+}
+
+.md-typeset .grid.cards > ol > li,
+.md-typeset .grid.cards > ul > li {
+    border-radius: 12px;
+    border: 1px solid rgba(255, 122, 26, 0.18);
+    transition: border-color 150ms ease, transform 150ms ease;
+}
+
+.md-typeset .grid.cards > ol > li:hover,
+.md-typeset .grid.cards > ul > li:hover {
+    border-color: var(--md-accent-fg-color);
+    transform: translateY(-2px);
 }
