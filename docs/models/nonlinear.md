@@ -121,7 +121,13 @@ Returns the Pearson R^2 between observed and predicted phenotypes.
 
 ### `transform(X=None, y=None)`
 
-Linearizes observed phenotypes onto the additive scale. The formula is `(y - f(x_hat)) + x_hat`, which removes the nonlinear curvature without discarding residual information. Use `transform` when you want to inspect epistatic coefficients on the linear scale after accounting for the nonlinear measurement function.
+Linearizes observed phenotypes onto the additive scale. The formula is
+
+$$
+y_{\text{linear}} \;=\; \bigl(y - f(\hat{x})\bigr) \;+\; \hat{x}
+$$
+
+which removes the nonlinear curvature without discarding residual information. Use `transform` when you want to inspect epistatic coefficients on the linear scale after accounting for the nonlinear measurement function.
 
 ```python
 # Observed phenotypes projected onto the additive scale.

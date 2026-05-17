@@ -21,13 +21,13 @@ The same parameter is accepted by `encode_vectors` and `get_model_matrix` when y
 
 ## Global encoding (Hadamard/Walsh)
 
-Under global encoding, wildtype bits are mapped to `+1` and mutant bits to `-1`. The intercept column is always `+1`.
+Under global encoding, wildtype bits are mapped to $+1$ and mutant bits to $-1$. The intercept column is always $+1$.
 
-```
-wildtype letter -> +1
-mutant letter   -> -1
-intercept       -> +1
-```
+$$
+\text{wildtype letter} \to +1, \quad
+\text{mutant letter} \to -1, \quad
+\text{intercept} \to +1
+$$
 
 This is the Hadamard (Walsh) encoding. It has two important mathematical properties:
 
@@ -42,13 +42,13 @@ Global encoding also enables the Walsh-Hadamard fast path. When you fit an `Epis
 
 ## Local encoding (biochemical)
 
-Under local encoding, the binary values are kept as-is: wildtype bits remain `0` and mutant bits remain `1`. The intercept column is `+1`.
+Under local encoding, the binary values are kept as-is: wildtype bits remain $0$ and mutant bits remain $1$. The intercept column is $+1$.
 
-```
-wildtype letter ->  0
-mutant letter   ->  1
-intercept       -> +1
-```
+$$
+\text{wildtype letter} \to 0, \quad
+\text{mutant letter} \to 1, \quad
+\text{intercept} \to +1
+$$
 
 This encoding has a direct mechanistic interpretation:
 

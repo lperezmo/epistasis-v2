@@ -10,6 +10,10 @@ repo_name = "lperezmo/epistasis-v2"
 edit_uri = "edit/main/docs/"
 
 extra_css = ["stylesheets/extra.css"]
+extra_javascript = [
+  "javascripts/mathjax.js",
+  "https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js",
+]
 
 nav = [
   { "Home" = "index.md" },

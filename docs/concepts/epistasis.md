@@ -13,11 +13,11 @@ The simplest model of how mutations affect phenotype assumes independence: each 
 
 Concretely, consider two mutations at positions 1 and 2. The additive prediction for the double mutant is:
 
-```
-predicted = wildtype + effect(mut1) + effect(mut2)
-```
+$$
+\hat{y}_{\text{double}} \;=\; y_{\text{wt}} \;+\; \Delta_1 \;+\; \Delta_2
+$$
 
-If the measured phenotype deviates from this prediction, the deviation is the pairwise (order-2) epistatic coefficient for that pair. Higher-order terms capture deviations that remain even after accounting for all lower-order combinations.
+where $\Delta_k$ is the additive effect of mutation $k$ alone. If the measured phenotype deviates from this prediction, the deviation is the pairwise (order-2) epistatic coefficient for that pair. Higher-order terms capture deviations that remain even after accounting for all lower-order combinations.
 
 !!! info
 
@@ -27,11 +27,11 @@ If the measured phenotype deviates from this prediction, the deviation is the pa
 
 epistasis-v2 fits a linear model in epistatic coefficient space:
 
-```
-phenotype = β₀ + Σᵢ βᵢ·xᵢ + Σᵢ<ⱼ βᵢⱼ·xᵢxⱼ + ...
-```
+$$
+y \;=\; \beta_0 \;+\; \sum_{i} \beta_i \, x_i \;+\; \sum_{i < j} \beta_{ij} \, x_i x_j \;+\; \sum_{i < j < k} \beta_{ijk} \, x_i x_j x_k \;+\; \cdots
+$$
 
-where each `x` variable is ±1 (global encoding) or 0/1 (local encoding) and each `β` coefficient is an epistatic term. The model is fit by assembling a design matrix X and solving the regression with an sklearn estimator.
+where each $x_i$ is $\pm 1$ (global encoding) or $0/1$ (local encoding), and each $\beta$ coefficient is an epistatic term. The model is fit by assembling a design matrix X and solving the regression with an sklearn estimator.
 
 The two supported encodings, global (Hadamard) and local (biochemical), produce numerically different coefficients that carry different interpretations. See [Global and local encodings explained](encodings.md) for details.
 

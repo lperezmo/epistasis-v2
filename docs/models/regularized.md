@@ -21,7 +21,7 @@ All three models expose an `alpha` parameter that controls regularization streng
 
 ## EpistasisRidge
 
-`EpistasisRidge` applies an L2 penalty: it minimizes the residual sum of squares plus `alpha * sum(coef^2)`. L2 regularization shrinks all coefficients smoothly toward zero but rarely drives any coefficient to exactly zero. It is a good default when you believe most interactions are real but small.
+`EpistasisRidge` applies an L2 penalty: it minimizes the residual sum of squares plus $\alpha \, \sum_k \beta_k^{2}$. L2 regularization shrinks all coefficients smoothly toward zero but rarely drives any coefficient to exactly zero. It is a good default when you believe most interactions are real but small.
 
 ### Constructor parameters
 
@@ -63,7 +63,7 @@ print("Coefficients:", model.epistasis.values)
 
 ## EpistasisLasso
 
-`EpistasisLasso` applies an L1 penalty: it minimizes the residual sum of squares plus `alpha * sum(|coef|)`. Unlike L2, the L1 penalty drives many coefficients to exactly zero, producing a sparse set of epistatic interactions. After fitting, call `model.compression_ratio()` to see what fraction of coefficients were zeroed out.
+`EpistasisLasso` applies an L1 penalty: it minimizes the residual sum of squares plus $\alpha \, \sum_k |\beta_k|$. Unlike L2, the L1 penalty drives many coefficients to exactly zero, producing a sparse set of epistatic interactions. After fitting, call `model.compression_ratio()` to see what fraction of coefficients were zeroed out.
 
 ### Constructor parameters
 
