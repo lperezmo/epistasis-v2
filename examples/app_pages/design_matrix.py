@@ -76,9 +76,9 @@ def render() -> None:
 
     st.markdown("##### Orthogonality under global encoding")
     st.markdown(
-        "When the library is the complete biallelic cube at full order, "
-        "`X^T X` is exactly `2^L * I`. This is what the FWHT fast path "
-        "exploits to avoid the dense solve."
+        r"When the library is the complete biallelic cube at full order, "
+        r"$X^{\top} X$ is exactly $2^{L} \, I$. This is what the FWHT fast path "
+        r"exploits to avoid the dense solve."
     )
     with st.container(border=True):
         if encoding != "global" or order != L:
@@ -105,7 +105,7 @@ def render() -> None:
         )
         apply_theme(gram_fig, height=420)
         st.plotly_chart(gram_fig, width="stretch", config=PLOTLY_CONFIG)
-        st.caption("Diagonal carries 2^L; all off-diagonals are 0 at full order.")
+        st.caption(r"Diagonal carries $2^{L}$; all off-diagonals are 0 at full order.")
 
     # Encoded vectors preview.
     encoded = encode_vectors(gpm.binary_packed, model_type=encoding)

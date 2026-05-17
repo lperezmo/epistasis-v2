@@ -29,9 +29,9 @@ def render() -> None:
 
     st.markdown("### Walsh-Hadamard fast path")
     st.caption(
-        "Full-order biallelic OLS has X^T X = 2^L * I. "
-        "Solving via the Fast Walsh-Hadamard Transform turns an O(n^3) dense "
-        "solve into an O(n log n) transform."
+        "Full-order biallelic OLS has $X^{\\top} X = 2^{L} \\, I$. "
+        "Solving via the Fast Walsh-Hadamard Transform turns an $O(n^{3})$ dense "
+        "solve into an $O(n \\log n)$ transform."
     )
 
     with st.container(border=True):
