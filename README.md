@@ -5,7 +5,7 @@
 [![PyPI](https://img.shields.io/pypi/v/epistasis-v2.svg)](https://pypi.org/project/epistasis-v2/)
 [![Python](https://img.shields.io/pypi/pyversions/epistasis-v2.svg)](https://pypi.org/project/epistasis-v2/)
 [![License](https://img.shields.io/badge/license-Unlicense-blue.svg)](UNLICENSE)
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://epistasis-v2.streamlit.app/)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-App-FF4B4B?logo=streamlit&logoColor=white)](https://epistasis-v2.streamlit.app/)
 
 High-performance Python library for fitting high-order epistatic interactions in genotype-phenotype maps. A clean-break rewrite of [harmslab/epistasis](https://github.com/harmslab/epistasis).
 
