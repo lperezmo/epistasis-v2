@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from epistasis.models.linear import EpistasisLinearRegression
-from epistasis.pyplot import DEFAULT_ORDER_COLORS, plot_coefs
+from epistasis.pyplot import DEFAULT_ORDER_COLORS, plot_coefs, plot_correlation
 from epistasis.simulate import simulate_random_linear_gpm
 
 
@@ -81,3 +81,31 @@ def test_plot_coefs_rejects_intercept_only() -> None:
 def test_default_order_colors_has_intercept_slot() -> None:
     # Index 0 is reserved for intercept / insignificant terms.
     assert len(DEFAULT_ORDER_COLORS) >= 5
+
+
+def test_plot_correlation_from_model() -> None:
+    model = _fitted_model()
+    fig, ax = plot_correlation(model)
+    assert fig is not None and ax is not None
+    plt.close(fig)
+
+
+def test_plot_correlation_from_arrays() -> None:
+    obs = np.array([0.1, 0.5, 0.9, 1.2])
+    pred = np.array([0.15, 0.45, 0.85, 1.25])
+    fig, ax = plot_correlation(observed=obs, predicted=pred)
+    assert ax is not None
+    plt.close(fig)
+
+
+def test_plot_correlation_requires_model_or_arrays() -> None:
+    with pytest.raises(ValueError):
+        plot_correlation()
+
+
+def test_plot_correlation_into_existing_axis() -> None:
+    model = _fitted_model()
+    fig, ax = plt.subplots()
+    out_fig, out_ax = plot_correlation(model, ax=ax)
+    assert out_ax is ax
+    plt.close(fig)

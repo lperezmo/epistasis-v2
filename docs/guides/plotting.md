@@ -94,6 +94,23 @@ fig, axes = plot_coefs(model, sigmas=1.0, significance="bon", significance_cutof
 The grid cell borders pick up the active matplotlib theme's `grid.color`, so the figure
 adapts to light and dark styles automatically.
 
+## `plot_correlation`
+
+The second classic diagnostic: observed against model-predicted phenotype, around
+the 1:1 line, annotated with the coefficient of determination.
+
+```python
+from epistasis.pyplot import plot_correlation
+
+fig, ax = plot_correlation(model)   # R^2 from model.score()
+```
+
+Or pass arrays directly (R^2 is then computed from them):
+
+```python
+fig, ax = plot_correlation(observed=y_obs, predicted=y_pred)
+```
+
 ## Saving figures
 
 `fig` is a plain matplotlib `Figure`:
@@ -103,4 +120,4 @@ fig.savefig("coefs.png", dpi=200, bbox_inches="tight")
 fig.savefig("coefs.svg")
 ```
 
-See the [pyplot reference](../reference/pyplot.md) for the full signature.
+See the [pyplot reference](../reference/pyplot.md) for the full signatures.

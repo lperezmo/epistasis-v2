@@ -9,7 +9,7 @@ Optional matplotlib-backed plotting. Requires `epistasis-v2[plot]`. See
 [Plotting epistatic coefficients](../guides/plotting.md) for a guide-style walkthrough.
 
 ```python
-from epistasis.pyplot import plot_coefs, DEFAULT_ORDER_COLORS
+from epistasis.pyplot import plot_coefs, plot_correlation, DEFAULT_ORDER_COLORS
 ```
 
 ## `plot_coefs`
@@ -63,6 +63,33 @@ These are mutually exclusive; supplying neither raises `ValueError`.
 
 `(fig, axes)` where `axes` is `[bar_axis, grid_axis]` when `xgrid` is True, otherwise
 `[bar_axis]`. Pass `ax` to draw into existing axes instead of creating a new figure.
+
+## `plot_correlation`
+
+```python
+def plot_correlation(
+    model: EpistasisBaseModel | None = None,
+    *,
+    observed: NDArray[np.float64] | None = None,
+    predicted: NDArray[np.float64] | None = None,
+    color: str | None = None,
+    point_size: float = 36.0,
+    alpha: float = 0.85,
+    annotate_r2: bool = True,
+    figsize: tuple[float, float] = (5.5, 5.5),
+    ax: Axes | None = None,
+) -> tuple[Figure, Axes]
+```
+
+Scatter observed against predicted phenotype around the 1:1 line.
+
+- With `model`, observed values come from its attached GPM and predictions from
+  `model.predict()`.
+- With `observed`/`predicted` arrays, those are used directly.
+
+The annotated R^2 is computed from the observed and predicted values.
+
+Returns `(fig, ax)`.
 
 ## `DEFAULT_ORDER_COLORS`
 
