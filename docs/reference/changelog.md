@@ -11,6 +11,45 @@ description: "Track breaking changes, new features, and bug fixes across epistas
 
     `epistasis-v2` has **no backward compatibility** with v1 (`harmslab/epistasis`). If you depend on v1 behavior, pin the original package: `epistasis==0.7.5`. The two packages cannot be installed in the same environment.
 
+## v1.3.0 (2026-05-30)
+
+Tags: Feature, Documentation
+
+### Plotting (`epistasis.pyplot`)
+
+A new optional `epistasis.pyplot` subpackage, mirroring the `gpgraph-v2` and `gpvolve-v2` families. matplotlib moved from a (dead, unused) core dependency to an optional `[plot]` extra (`>=3.10`).
+
+- **`plot_coefs`**: reproduces the signature figure from v1, fitted coefficients as a bar chart colored by interaction order, with a site-participation grid underneath marking which sites belong to each term. Optional Bonferroni significance shading and stars. The grid is drawn as a single `imshow` RGBA array and the cell borders follow the active matplotlib theme, so the figure adapts to light and dark styles.
+- **`plot_correlation`**: observed-vs-predicted phenotype scatter around the 1:1 line, annotated with R^2. Accepts a fitted model or explicit `observed`/`predicted` arrays.
+
+See the [plotting guide](../guides/plotting.md) and the [pyplot reference](pyplot.md).
+
+### Documentation site
+
+This Zensical documentation site was added and deploys to GitHub Pages on push to `main`, using the modern theme that matches the rest of the v2 family. Epistasis equations render as LaTeX via MathJax, and light/dark figures were added across the guides and reference pages.
+
+## v1.2.0 (2026-05-16)
+
+Tags: Feature
+
+### Sparse design matrices for Lasso / ElasticNet
+
+`EpistasisLasso` and `EpistasisElasticNet` gained a `scipy.sparse.csc_matrix` design-matrix path via a `sparse=` parameter. `sparse="auto"` (the default) engages for `model_type="local"` where the per-site product columns are 0/1; pass `sparse=True` / `False` to override. This fixes the out-of-memory blow-up at `L >= 20` where the dense float64 design matrix used to OOM. New `get_model_matrix_sparse` / `build_model_matrix_sparse` helpers live in `epistasis.matrix`: local builds construct the CSC matrix column-by-column, global falls back to converting the dense kernel output.
+
+### Nonlinear variants
+
+- **`EpistasisPowerTransform`**: the Sailer and Harms (2017) Box-Cox-style transform, ported from v1 with the training-set geometric-mean reference locked at fit time.
+- **`EpistasisSpline`**: smoothing-spline minimizer via `scipy.interpolate.UnivariateSpline`, with deterministic jitter on duplicate `x` values.
+- **`EpistasisMonotonicGE`**: a sum of `K` tanh sigmoids with non-negative `b_k`, `c_k`, monotone by construction. Follows Tareen et al. 2022 (MAVE-NN, Genome Biology 23:98). Identifiable, so it avoids the sign ambiguity that hits unconstrained global-epistasis fits.
+
+### Classifiers
+
+- **`EpistasisLDA`** and **`EpistasisQDA`** over the additive-projected design matrix.
+- **`EpistasisGaussianProcess`** wrapping sklearn's `GaussianProcessClassifier`.
+- **`EpistasisGaussianMixture`**: deterministic viable-component assignment by member-phenotype mean, replacing v1's half-finished GMM.
+
+80 new tests across sparse parity, nonlinear-variant round trips, and classifier behavior.
+
 ## v1.1.1 (2026-05-03)
 
 Tags: Bug Fix, Chore
@@ -101,11 +140,11 @@ v1.0.0 is the first production release of the clean-break rewrite. All modules b
 
 ??? note "epistasis.models.nonlinear"
 
-    `EpistasisNonlinearRegression` and `FunctionMinimizer`. Two-stage fit: an order-1 additive linear model approximates average per-mutation effects, then a user-supplied `f(x, *params)` is fit via Levenberg-Marquardt (`lmfit`). `power.py` and `spline.py` variants are deferred.
+    `EpistasisNonlinearRegression` and `FunctionMinimizer`. Two-stage fit: an order-1 additive linear model approximates average per-mutation effects, then a user-supplied `f(x, *params)` is fit via Levenberg-Marquardt (`lmfit`). The `power.py` and `spline.py` variants shipped later in v1.2.0.
 
 ??? note "epistasis.models.classifiers"
 
-    `EpistasisLogisticRegression` for viability classification. Binarizes observed phenotypes at a threshold and uses the projected additive design matrix as features. LDA, QDA, Gaussian Process, and GMM classifiers are deferred.
+    `EpistasisLogisticRegression` for viability classification. Binarizes observed phenotypes at a threshold and uses the projected additive design matrix as features. The LDA, QDA, Gaussian Process, and GMM classifiers shipped later in v1.2.0.
 
 ??? note "epistasis.simulate"
 
@@ -132,12 +171,3 @@ v1.0.0 is the first production release of the clean-break rewrite. All modules b
 - `encode_vectors`: uint8 binary_packed to int8 Hadamard/local encoding
 - `build_model_matrix`: parallel site-product over genotype rows; flat ragged sites layout
 - `fwht`: iterative butterfly Fast Walsh-Hadamard Transform
-
-## Pending items
-
-The following items are planned but not yet shipped:
-
-- Sparse design matrix path for Lasso / ElasticNet (memory concern at `L >= 20`)
-- `power.py` and `spline.py` nonlinear variants
-- Remaining classifier implementations (LDA, QDA, Gaussian Process, GMM) if demand surfaces
-- ReadTheDocs build

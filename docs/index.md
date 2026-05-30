@@ -100,4 +100,4 @@ epistasis-v2 is a high-performance Python library for fitting epistatic interact
 
 !!! note
 
-    epistasis-v2 is currently in **alpha**. The public API is stable for the ported modules, but some features (sparse Lasso at very high order, power/spline nonlinear variants) are still in progress.
+    epistasis-v2 is currently in **alpha**: the public API may still change between minor versions. The ported modules, the Rust kernels, the FWHT fast path, the sparse Lasso/ElasticNet design-matrix path, the power/spline/monotonic nonlinear variants, and the full classifier set (logistic, LDA, QDA, Gaussian process, Gaussian mixture) are all shipped.

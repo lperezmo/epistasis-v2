@@ -137,6 +137,10 @@ new_labels = model.predict(X=["AB", "BB"])
 new_proba = model.predict_proba(X=["AB", "BB"])
 ```
 
-## Alpha classifiers: deferred models
+## Other classifiers
 
-LDA (Linear Discriminant Analysis), QDA (Quadratic Discriminant Analysis), Gaussian Process, and Gaussian Mixture Model classifiers were part of the v1 roadmap. They are not included in v2 and are deferred pending user demand. If your use case requires one of these classifiers, open an issue in the repository describing your application.
+`EpistasisLogisticRegression` is one of five classifiers in `epistasis.models.classifiers`. The others share the same `add_gpm` -> `fit` -> `predict` workflow and the same additive-projected feature space:
+
+- [Discriminant analysis](discriminant-analysis.md): `EpistasisLDA` (linear boundary) and `EpistasisQDA` (quadratic boundary).
+- [`EpistasisGaussianProcess`](gaussian-process.md): calibrated probabilistic classification.
+- [`EpistasisGaussianMixture`](gaussian-mixture.md): unsupervised viable / nonviable split.

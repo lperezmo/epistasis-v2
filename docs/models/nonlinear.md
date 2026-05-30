@@ -12,6 +12,10 @@ Many biophysical phenotypes (fluorescence, growth rate, binding affinity) are me
 
 `EpistasisPowerTransform` (a Box-Cox-style scale, Sailer & Harms 2017) is the worked example above: the fitted curve is the nonlinear map from the additive genetic score to the measured phenotype.
 
+!!! tip "Ready-made variants"
+
+    You do not have to supply a `function` by hand. Three concrete subclasses ship with the scale built in: [`EpistasisPowerTransform`](power-transform.md) (Box-Cox), [`EpistasisSpline`](spline.md) (arbitrary smooth scale), and [`EpistasisMonotonicGE`](monotonic-ge.md) (monotone tanh-sum, MAVE-NN style). The rest of this page covers the generic two-stage model you configure with your own `function`.
+
 ## When to use this model
 
 Use `EpistasisNonlinearRegression` when you have reason to believe your phenotype measurements are a nonlinear transformation of an underlying additive genetic score. For example:
