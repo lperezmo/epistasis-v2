@@ -1,6 +1,103 @@
 # CHANGELOG
 
 
+## v1.3.0 (2026-05-30)
+
+### Chores
+
+- Replace broken static.streamlit.io badge with shields.io
+  ([`2ed6f3b`](https://github.com/lperezmo/epistasis-v2/commit/2ed6f3b13e917ca30e181b685f0d6a0d15e36665))
+
+- **docs**: Add documentation badge to README
+  ([`e0e9327`](https://github.com/lperezmo/epistasis-v2/commit/e0e932744b3882bf5644810ca9b9ce97505dfba2))
+
+- **docs**: Add Zensical documentation site with GitHub Pages deploy
+  ([`45b07d9`](https://github.com/lperezmo/epistasis-v2/commit/45b07d9380fc1f894d9501acd2e07a77ffccf047))
+
+Stand up an open-source documentation site for epistasis-v2 using Zensical, a static site generator
+  built on Material for MkDocs with TOML configuration and pure Markdown sources. The site deploys
+  to GitHub Pages via a workflow on push to main.
+
+Site contents (17 pages): - Get Started: quickstart, installation - Core Concepts: GPMs, epistasis,
+  design matrix, global/local encodings - Models: linear OLS, regularized (Ridge/Lasso/ElasticNet),
+  nonlinear two-stage, logistic classifier - Simulation & Validation: simulate_linear_gpm, k-fold
+  cross-validation, BayesianSampler with MCMC - Reference: stats, FWHT fast path, exceptions,
+  changelog
+
+Configuration: - zensical.toml with classic theme variant (Material for MkDocs look), light/dark
+  palette toggle on system preference, custom grey primary color via docs/stylesheets/extra.css -
+  Explicit nav grouped by topic
+
+Deployment: - .github/workflows/docs.yml builds with 'zensical build --clean' and publishes via
+  actions/deploy-pages on push to main when docs/, zensical.toml, or the workflow itself changes;
+  also supports workflow_dispatch - Pages source must be set to "GitHub Actions" (one-time, enabled
+  separately via the GitHub API after this PR merges) - Site URL:
+  https://lperezmo.github.io/epistasis-v2/
+
+Streamlit showcase: - Extend the Overview page hypercube viz to support L=3 through L=7 (was L=3 and
+  L=4). Uses a recursive Schlegel-style projection where each extra bit nests into a distinct corner
+  of the parent cube, guaranteeing all 2^L vertices stay unique. Marker size, label visibility, and
+  edge width adapt to L so the higher-dim views stay readable.
+
+Other: - Add site/ to .gitignore so local zensical builds are not tracked
+
+- **docs**: Switch to modern Zensical theme ([#2](https://github.com/lperezmo/epistasis-v2/pull/2),
+  [`f4d1324`](https://github.com/lperezmo/epistasis-v2/commit/f4d13248b73baddb5dcba9801d3650cb0b05839a))
+
+Match the look used by gpmap-v2 and gpgraph-v2 docs sites and by zensical.org itself. Replace the
+  grey classic palette with the orange accent on dark backgrounds.
+
+- zensical.toml: variant = "modern" - docs/stylesheets/extra.css: orange accent (#ff6a00 light,
+  #ff7a1a dark), rounded grid card borders with hover lift
+
+- **streamlit**: Fix ruff I001 blank-line after imports in intro.py
+  ([`44dc4ec`](https://github.com/lperezmo/epistasis-v2/commit/44dc4ec42730cca8b86d8b70fcaeea7d68a510ff))
+
+- **streamlit**: Render math with LaTeX on design matrix and FWHT pages
+  ([`23b28da`](https://github.com/lperezmo/epistasis-v2/commit/23b28da9ec25a2c567c3101f96d981916df4bfbf))
+
+Switch the X^T X orthogonality copy on the design matrix page and the Walsh-Hadamard speed-path
+  captions on the FWHT page to KaTeX math so the expressions display as proper formulas.
+
+### Documentation
+
+- Render epistasis equations with MathJax
+  ([`1e0d2e4`](https://github.com/lperezmo/epistasis-v2/commit/1e0d2e4d9cf246b4a3a4993c236d01384c85bd7d))
+
+Wire up MathJax via extra_javascript and rewrite the additive prediction, linear coefficient model,
+  encoding mappings, nonlinear transform, and Ridge/Lasso penalty expressions as proper LaTeX so
+  they render as math rather than monospace code.
+
+### Features
+
+- **pyplot**: Add plot_coefs and plot_correlation
+  ([#3](https://github.com/lperezmo/epistasis-v2/pull/3),
+  [`63b32d6`](https://github.com/lperezmo/epistasis-v2/commit/63b32d6dd508b56277e5a2bb52a71b203df3d8ca))
+
+* feat(pyplot): add plot_coefs and optional [plot] extra
+
+Add an epistasis.pyplot subpackage mirroring gpgraph-v2/gpvolve-v2. Its first function, plot_coefs,
+  reproduces the signature figure from the v1 epistasis package: fitted coefficients as a bar chart
+  colored by interaction order, with a site-participation grid underneath marking which sites belong
+  to each term. Optional Bonferroni significance shading and stars.
+
+The grid is rendered as a single imshow RGBA array (faster and crisper than v1's per-cell PathPatch
+  loop) and cell borders follow the active matplotlib theme so the figure adapts to light and dark
+  styles.
+
+matplotlib was a core dependency but was imported nowhere in the package; it is now an optional
+  [plot] extra (>=3.10), matching the rest of the v2 family. mypy gains a matplotlib missing-imports
+  override. Adds docs/guides/plotting.md and docs/reference/pyplot.md (registered in the nav) and a
+  README section.
+
+* feat(pyplot): add plot_correlation
+
+Observed-vs-predicted phenotype scatter around the 1:1 line, annotated with the coefficient of
+  determination. Accepts a fitted model (observed from its GPM, predictions from predict()) or
+  explicit observed/predicted arrays, and can draw into an existing axis. Adds tests and docs
+  entries.
+
+
 ## v1.2.0 (2026-05-16)
 
 ### Chores
