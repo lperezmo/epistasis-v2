@@ -7,6 +7,11 @@ description: "Prevent overfitting at high interaction order with L2 (Ridge), L1 
 
 When you fit a high-order epistasis model, the number of interaction terms grows combinatorially with sequence length. Without regularization, the model can overfit the data, capturing noise rather than genuine epistatic signal. The three regularized models in `epistasis.models.linear` address this by adding a penalty to the loss function that shrinks coefficients toward zero. All three share the same `add_gpm` -> `fit` -> `predict` -> `score` workflow as `EpistasisLinearRegression`, with no changes to how you attach data or read results.
 
+![Lasso regularization path: coefficients shrink to zero as the penalty strength increases](../assets/lasso-path-light.png#only-light)
+![Lasso regularization path: coefficients shrink to zero as the penalty strength increases](../assets/lasso-path-dark.png#only-dark)
+
+As the Lasso penalty `alpha` increases (left to right), coefficients are driven to exactly zero one by one, so the path doubles as a feature-selection view over the epistasis design matrix.
+
 !!! tip
 
     Choose your regularizer based on what you expect about the underlying biology. If you expect most interactions to be small but non-zero, use Ridge. If you expect most high-order interactions to be absent (a sparse landscape), use Lasso. If you are unsure, ElasticNet gives you a tunable blend of both behaviors.

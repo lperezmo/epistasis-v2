@@ -7,6 +7,9 @@ description: "epistasis-v2 fits high-order epistatic interactions in genotype-ph
 
 epistasis-v2 is a high-performance Python library for fitting epistatic interactions in genotype-phenotype maps (GPMs). It provides linear and nonlinear regression models, Bayesian sampling, and simulation utilities, all backed by Rust-accelerated kernels and a Walsh-Hadamard fast path that delivers up to 6,000x speedup over the previous generation at full interaction order.
 
+![Fitted epistatic coefficients colored by interaction order](assets/coefficients-hero-light.png#only-light)
+![Fitted epistatic coefficients colored by interaction order](assets/coefficients-hero-dark.png#only-dark)
+
 <div class="grid cards" markdown>
 
 -   **Quick Start**

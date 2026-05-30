@@ -7,6 +7,11 @@ description: "Fit epistatic coefficients with ordinary least squares, analytic s
 
 `EpistasisLinearRegression` is the simplest and fastest way to decompose a genotype-phenotype map into epistatic coefficients. It performs ordinary least squares over the epistasis design matrix and writes analytic coefficient standard errors directly into `model.epistasis.stdeviations`. For complete biallelic libraries encoded with the global (Hadamard) scheme, the model automatically engages a Walsh-Hadamard fast path that scales as O(n log n) instead of O(n^2), up to 6000x faster than the full matrix solve.
 
+![Observed versus predicted phenotype scattered tightly around the 1:1 line](../assets/true-vs-pred-light.png#only-light)
+![Observed versus predicted phenotype scattered tightly around the 1:1 line](../assets/true-vs-pred-dark.png#only-dark)
+
+A well-specified model reproduces the held-out phenotypes closely: observed versus predicted values fall along the dashed 1:1 line. This is the diagnostic `epistasis.pyplot.plot_correlation` draws for you.
+
 ## Constructor parameters
 
 `order` (`int`, default `1`)

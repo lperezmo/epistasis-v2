@@ -7,6 +7,11 @@ description: "fwht_ols_coefficients solves full-order OLS in O(n log n) via the 
 
 The `epistasis.fast` module exposes `fwht_ols_coefficients`, a closed-form OLS solver for full-order biallelic libraries encoded under the global (Hadamard) scheme. Instead of constructing the `n x n` design matrix and calling a dense least-squares solver, it exploits the Hadamard structure to solve for all `2^L` coefficients in `O(n log n)` operations.
 
+![FWHT closed-form solve versus dense least-squares: identical coefficients, far less time](../assets/fwht-vs-lstsq-light.png#only-light)
+![FWHT closed-form solve versus dense least-squares: identical coefficients, far less time](../assets/fwht-vs-lstsq-dark.png#only-dark)
+
+The FWHT path returns coefficients identical to the dense least-squares solve (to floating-point tolerance) while avoiding the `n x n` design matrix entirely, which is what makes the full-order speedups below possible.
+
 ```python
 from epistasis.fast import fwht_ols_coefficients
 ```

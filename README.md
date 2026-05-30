@@ -13,6 +13,13 @@ High-performance Python library for fitting high-order epistatic interactions in
 
 A multi-page Streamlit showcase lives under [`examples/`](./examples/) and is published at [epistasis-v2.streamlit.app](https://epistasis-v2.streamlit.app/).
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/lperezmo/epistasis-v2/main/docs/assets/coefficients-hero-dark.png">
+    <img alt="Fitted epistatic coefficients colored by interaction order" src="https://raw.githubusercontent.com/lperezmo/epistasis-v2/main/docs/assets/coefficients-hero-light.png" width="820">
+  </picture>
+</p>
+
 ## What changed from v1
 
 - Rust hot-path kernels via PyO3 (`epistasis._core`) instead of a shipped Cython `.c` blob.
@@ -116,6 +123,13 @@ for reproducible scripts and setup instructions.
 > and produced no pre-built Windows wheel; times below use the pure-Python fallback, which
 > is slower than actual v1+Cython. Even so, the FWHT fast path in v2 is orders of magnitude
 > faster at full order.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/lperezmo/epistasis-v2/main/docs/assets/speedup-bars-dark.png">
+    <img alt="fit() speedup of epistasis-v2 over v1 across sequence lengths" src="https://raw.githubusercontent.com/lperezmo/epistasis-v2/main/docs/assets/speedup-bars-light.png" width="720">
+  </picture>
+</p>
 
 ### fit() order=1 (sklearn lstsq path in both versions)
 

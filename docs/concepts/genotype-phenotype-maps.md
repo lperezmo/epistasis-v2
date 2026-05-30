@@ -7,6 +7,11 @@ description: "A genotype-phenotype map links each genetic sequence to a measured
 
 A genotype-phenotype map (GPM) is the foundational data structure in epistasis-v2. It pairs each genetic sequence in your library with a measured phenotype value, for example a protein variant's fluorescence or binding affinity. All epistasis models in this library accept a GPM as their primary input, so understanding how to construct one correctly is the first step in any analysis.
 
+![A noisy observed landscape on the left and the smooth phenotypes reconstructed by a fitted epistasis model on the right](../assets/reconstruction-light.png#only-light)
+![A noisy observed landscape on the left and the smooth phenotypes reconstructed by a fitted epistasis model on the right](../assets/reconstruction-dark.png#only-dark)
+
+Each node is a genotype laid out by Hamming distance from wildtype and colored by phenotype. Fitting an epistasis model to the noisy observed map (left) recovers the smooth underlying landscape (right): the same GPM object is both the input you build and the output the model predicts.
+
 ## The `GenotypePhenotypeMap` object
 
 epistasis-v2 relies on `gpmap-v2`'s `GenotypePhenotypeMap` class to represent your data. This object validates sequences, constructs a binary encoding of each genotype, and exposes the attributes that the epistasis kernels read internally.
