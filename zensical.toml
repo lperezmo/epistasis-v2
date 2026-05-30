@@ -38,9 +38,13 @@ nav = [
     "guides/cross-validation.md",
     "guides/bayesian-sampling.md",
   ]},
+  { "Visualization" = [
+    "guides/plotting.md",
+  ]},
   { "Reference" = [
     "reference/stats.md",
     "reference/fast-path.md",
+    "reference/pyplot.md",
     "reference/exceptions.md",
     "reference/changelog.md",
   ]},
