@@ -60,6 +60,26 @@ uv run ruff format --check .
 uv run mypy python/epistasis
 ```
 
+## Plotting
+
+Plotting support is optional. For matplotlib:
+
+```bash
+pip install "epistasis-v2[plot]"
+```
+
+`epistasis.pyplot.plot_coefs` draws fitted coefficients as a bar chart colored by
+interaction order, with a site-participation grid underneath (the signature figure
+from v1):
+
+```python
+from epistasis.models.linear import EpistasisLinearRegression
+from epistasis.pyplot import plot_coefs
+
+model = EpistasisLinearRegression(order=3).add_gpm(gpm).fit()
+fig, (bar_axis, grid_axis) = plot_coefs(model)
+```
+
 ## Current progress
 
 Phase 0 (scaffold), Phase 1 (port), Phase 2 (Rust kernels), and Phase 3 (FWHT fast path + sparse design matrices for Lasso/ElasticNet) are complete.
