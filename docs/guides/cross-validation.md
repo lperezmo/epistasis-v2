@@ -7,6 +7,11 @@ description: "Use k_fold and holdout from epistasis.validate to evaluate how wel
 
 Epistasis models with many free parameters, high interaction order or weak regularization, can fit the training phenotypes closely while predicting unseen genotypes poorly. The `epistasis.validate` module provides two cross-validation helpers, `k_fold` and `holdout`, that let you measure generalization performance and choose the interaction order and regularization strength that work best for your dataset.
 
+![In-sample R^2 keeps rising with interaction order while cross-validated R^2 peaks at the true order then falls](../assets/cv-order-light.png#only-light)
+![In-sample R^2 keeps rising with interaction order while cross-validated R^2 peaks at the true order then falls](../assets/cv-order-dark.png#only-dark)
+
+The gap between in-sample and cross-validated R^2 is exactly the overfitting this page helps you avoid: training fit climbs monotonically with order, while held-out fit peaks at the true interaction order and then degrades.
+
 ## Why validate?
 
 A model's training R^2 always increases as you raise the interaction order, because more parameters fit the observed phenotypes more tightly. Cross-validation exposes whether that improvement represents real signal or memorization: you fit the model on one part of the data and score it on another part the model has never seen. When test R^2 levels off or drops while training R^2 keeps rising, you have found the point of overfitting.

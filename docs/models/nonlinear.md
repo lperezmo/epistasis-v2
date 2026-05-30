@@ -7,6 +7,11 @@ description: "Fit epistasis in nonlinear phenotype landscapes using a two-stage 
 
 Many biophysical phenotypes (fluorescence, growth rate, binding affinity) are measured on an inherently nonlinear scale. If you fit a linear epistasis model directly to such data, the recovered coefficients conflate genuine genetic interactions with the curvature of the measurement scale. `EpistasisNonlinearRegression` separates these effects with a two-stage procedure: it first learns an additive linear representation of the landscape, then fits a user-supplied nonlinear function that maps the additive phenotype to the observed measurement scale.
 
+![Power-transform fit recovering a nonlinear scale between additive and observed phenotype](../assets/power-transform-light.png#only-light)
+![Power-transform fit recovering a nonlinear scale between additive and observed phenotype](../assets/power-transform-dark.png#only-dark)
+
+`EpistasisPowerTransform` (a Box-Cox-style scale, Sailer & Harms 2017) is the worked example above: the fitted curve is the nonlinear map from the additive genetic score to the measured phenotype.
+
 ## When to use this model
 
 Use `EpistasisNonlinearRegression` when you have reason to believe your phenotype measurements are a nonlinear transformation of an underlying additive genetic score. For example:

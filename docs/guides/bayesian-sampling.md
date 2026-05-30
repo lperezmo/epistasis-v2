@@ -7,6 +7,11 @@ description: "Use BayesianSampler to run MCMC ensemble sampling around fitted ep
 
 Point estimates from linear regression tell you the most-likely epistatic coefficients, but not how certain those estimates are. `BayesianSampler` wraps a fitted epistasis model in an MCMC ensemble sampler, draws from the posterior distribution over model parameters, and lets you compute percentile confidence intervals on every coefficient without making Gaussian assumptions.
 
+![Corner plot of the posterior over four epistatic coefficients with true values marked](../assets/bayesian-corner-light.png#only-light)
+![Corner plot of the posterior over four epistatic coefficients with true values marked](../assets/bayesian-corner-dark.png#only-dark)
+
+A corner plot of the posterior shows the marginal distribution of each coefficient on the diagonal and the pairwise correlations off-diagonal; the red lines mark the true simulated values.
+
 ## When to use Bayesian sampling
 
 Use `BayesianSampler` after you have fitted an epistasis model and want to answer questions like: "Is this pairwise coefficient meaningfully different from zero?", "How wide is the credible interval on the intercept?", or "Do any high-order coefficients have posteriors that overlap zero?" MCMC is slower than point estimation, so apply it once you have selected your model order through cross-validation.
