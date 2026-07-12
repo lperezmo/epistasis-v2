@@ -41,7 +41,7 @@ fn encode_vectors<'py>(
     let out = PyArray2::<i8>::zeros(py, [n, n_bits + 1], false);
     {
         let output_view = unsafe { out.as_array_mut() };
-        py.allow_threads(move || {
+        py.detach(move || {
             encode::encode_into(input, output_view, model);
         });
     }
@@ -81,7 +81,7 @@ fn build_model_matrix<'py>(
     let out = PyArray2::<i8>::zeros(py, [n, m], false);
     {
         let output_view = unsafe { out.as_array_mut() };
-        py.allow_threads(move || {
+        py.detach(move || {
             matrix::build_into(enc_view, flat, &offsets, output_view);
         });
     }
@@ -105,7 +105,7 @@ fn fwht_py<'py>(
     }
 
     let mut buf = input.to_vec();
-    py.allow_threads(|| {
+    py.detach(|| {
         fwht::fwht_inplace_f64(&mut buf);
     });
 
