@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+# Build and test jobs need no write access. Publishing jobs opt in below.
+permissions:
+  contents: read
+
 jobs:
   release:
     runs-on: ubuntu-latest
