@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.3.2 (2026-08-30)
+
+### Bug Fixes
+
+- **security**: Declare least-privilege workflow permissions
+  ([`0686dfd`](https://github.com/lperezmo/epistasis-v2/commit/0686dfdc694a21623067dadfa0595251da62f73f))
+
+
 ## v1.3.1 (2026-08-30)
 
 ### Bug Fixes

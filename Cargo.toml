@@ -3,7 +3,7 @@ members = ["crates/epistasis-core"]
 resolver = "2"
 
 [workspace.package]
-version = "1.3.1"
+version = "1.3.2"
 edition = "2021"
 license = "Unlicense"
 repository = "https://github.com/lperezmo/epistasis-v2"
