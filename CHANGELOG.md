@@ -1,6 +1,105 @@
 # CHANGELOG
 
 
+## v1.3.1 (2026-08-30)
+
+### Bug Fixes
+
+- **deps**: Patch crossbeam-epoch pointer formatting unsoundness
+  ([`55e3d31`](https://github.com/lperezmo/epistasis-v2/commit/55e3d311d17dd65fcf6a26b7f0b633a27a5f851e))
+
+- **deps**: Refresh vulnerable Python dependency locks
+  ([`432acfc`](https://github.com/lperezmo/epistasis-v2/commit/432acfcad356a3369930e4e2028b6afd9363fadf))
+
+### Chores
+
+- Bump vulnerable deps to clear Dependabot alerts
+  ([`fa21d3c`](https://github.com/lperezmo/epistasis-v2/commit/fa21d3cdaa45fd66a69ebf54b8f4114936618973))
+
+pip (uv.lock transitive pins): - starlette 1.0.0 -> 1.3.1 (alerts 1, 16, 17, 18, 19) -
+  python-multipart 0.0.27 -> 0.0.32 (alerts 12, 13, 14, 15) - urllib3 2.6.3 -> 2.7.0 (alerts 5, 6) -
+  idna 3.13 -> 3.18 (alert 7) - gitpython 3.1.49 -> 3.1.50 (alert 4)
+
+rust (Cargo.toml + Cargo.lock): - pyo3 0.23 -> 0.29 (alerts 2, 3, 8, 9, 10, 11) - numpy 0.23 -> 0.29
+  (kept in lockstep with pyo3) - rename Python::allow_threads to Python::detach for the 0.29 GIL API
+
+Rust release build, 17 cargo tests, and 364 Python tests all pass; the compiled extension imports
+  and runs under pyo3 0.29.
+
+### Documentation
+
+- Add light/dark gallery images to docs and README
+  ([#4](https://github.com/lperezmo/epistasis-v2/pull/4),
+  [`d82cb38`](https://github.com/lperezmo/epistasis-v2/commit/d82cb38dc6c6976835a641ca64df0ed70c7e3a9e))
+
+Add transparent-background figures that adapt to light and dark themes: docs pages pair them with
+  #only-light / #only-dark, the README uses <picture> with prefers-color-scheme (absolute raw URLs
+  so they also resolve on PyPI, where <picture> degrades to the light <img>).
+
+Images: coefficients hero, observed-vs-predicted, FWHT-vs-lstsq, Lasso path, CV-vs-order, power
+  transform, Bayesian corner, fit() speedup bars, and a noisy-vs-reconstructed landscape graph.
+  Backgrounds are transparent so they blend into any page background without a visible seam.
+
+Docs-only change; no package code touched.
+
+- Document shipped models and bring changelog current
+  ([#5](https://github.com/lperezmo/epistasis-v2/pull/5),
+  [`2b08959`](https://github.com/lperezmo/epistasis-v2/commit/2b08959bd8ce95a12ee08375ffa27c9e4315c0bb))
+
+The docs still listed the v1.2.0 work as deferred or in progress. Bring them current and give each
+  shipped model a page with a figure.
+
+Changelog (reference/changelog.md): - Add the v1.3.0 and v1.2.0 release entries. - Drop the stale
+  "Pending items" section (all of it shipped in v1.2.0; ReadTheDocs is moot now that docs are on
+  Zensical/Pages). - Point the v1.0.0 "deferred" notes at v1.2.0 where they landed.
+
+New model pages (each with a transparent light/dark figure): - discriminant-analysis (EpistasisLDA,
+  EpistasisQDA) - gaussian-process (EpistasisGaussianProcess) - gaussian-mixture
+  (EpistasisGaussianMixture) - power-transform (EpistasisPowerTransform) - spline (EpistasisSpline)
+  - monotonic-ge (EpistasisMonotonicGE)
+
+Replace the classifiers.md "deferred models" section with links to the new classifier pages, add a
+  ready-made-variants pointer on nonlinear.md, correct the index alpha note, and register all six
+  pages in the nav.
+
+Docs-only change; no package code touched.
+
+- Legible reconstruction graph labels in light and dark mode
+  ([#6](https://github.com/lperezmo/epistasis-v2/pull/6),
+  [`f46ac73`](https://github.com/lperezmo/epistasis-v2/commit/f46ac73b4daf15c22aa6cc1fa318c5d64d6e43a7))
+
+* docs: document shipped models and bring changelog current
+
+The docs still listed the v1.2.0 work as deferred or in progress. Bring them current and give each
+  shipped model a page with a figure.
+
+Changelog (reference/changelog.md): - Add the v1.3.0 and v1.2.0 release entries. - Drop the stale
+  "Pending items" section (all of it shipped in v1.2.0; ReadTheDocs is moot now that docs are on
+  Zensical/Pages). - Point the v1.0.0 "deferred" notes at v1.2.0 where they landed.
+
+New model pages (each with a transparent light/dark figure): - discriminant-analysis (EpistasisLDA,
+  EpistasisQDA) - gaussian-process (EpistasisGaussianProcess) - gaussian-mixture
+  (EpistasisGaussianMixture) - power-transform (EpistasisPowerTransform) - spline (EpistasisSpline)
+  - monotonic-ge (EpistasisMonotonicGE)
+
+Replace the classifiers.md "deferred models" section with links to the new classifier pages, add a
+  ready-made-variants pointer on nonlinear.md, correct the index alpha note, and register all six
+  pages in the nav.
+
+Docs-only change; no package code touched.
+
+* docs: make reconstruction graph node labels legible in light and dark mode
+
+The landscape-reconstruction figure colored each genotype node by phenotype but drew the node label
+  and outline in a single per-variant ink (black in the light PNG, white in the dark PNG), which
+  matched some fills exactly and made those labels vanish: dark text on the dark low-phenotype nodes
+  in light mode, light text on the bright peaks in dark mode.
+
+Label and outline color are now chosen per node from each node's own fill luminance (shared
+  draw_hypercube helper in the image workshop), so labels stay readable on any page background in
+  both PNG variants with no manual overrides.
+
+
 ## v1.3.0 (2026-05-30)
 
 ### Chores
