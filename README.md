@@ -24,7 +24,7 @@ A multi-page Streamlit showcase lives under [`examples/`](./examples/) and is pu
 
 - Rust hot-path kernels via PyO3 (`epistasis._core`) instead of a shipped Cython `.c` blob.
 - `uv` + `maturin` build. `pyproject.toml` only; no `setup.py`.
-- Python 3.10 through 3.13. Older interpreters dropped.
+- Python 3.11 through 3.13. Older interpreters dropped.
 - Type hints on the public API; `mypy --strict` in CI.
 - Composition over `@use_sklearn` MRO injection. Concrete models hold an sklearn estimator as an attribute and forward calls explicitly, which unlocks modern sklearn (>=1.2) that broke the v1 trick when `normalize=` was removed.
 - Walsh-Hadamard fast-path for Hadamard-encoded OLS fits: `O(n log n)` closed-form solve, no dense design matrix. Auto-engaged in `EpistasisLinearRegression.fit` when the attached GPM is a full-order biallelic library under global encoding; everything else falls back to the sklearn path.
@@ -51,7 +51,7 @@ epistasis-v2/
 
 ## Installation (dev)
 
-Requires Python >= 3.10 and a Rust toolchain. `gpmap-v2` is pulled from PyPI.
+Requires Python >= 3.11 and a Rust toolchain. `gpmap-v2` is pulled from PyPI.
 
 ```bash
 uv sync
