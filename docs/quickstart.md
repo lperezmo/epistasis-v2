@@ -15,7 +15,7 @@ Install epistasis-v2 from PyPI. The wheel includes pre-compiled Rust extensions,
 pip install epistasis-v2
 ```
 
-Python 3.10 or later is required. See [Installation](installation.md) for build-from-source instructions.
+Python 3.11 or later is required. See [Installation](installation.md) for build-from-source instructions.
 
 ## 2. Build a genotype-phenotype map
 

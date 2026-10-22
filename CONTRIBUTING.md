@@ -6,7 +6,7 @@ Short version: keep it working, keep it typed, keep the commit messages in Conve
 
 ## Prerequisites
 
-- Python >= 3.10
+- Python >= 3.11
 - Rust toolchain (`rustup default stable`)
 - [`uv`](https://docs.astral.sh/uv/)
 
@@ -37,7 +37,7 @@ uv run ruff format .
 uv run mypy python/epistasis
 ```
 
-CI runs the same checks on Python 3.10 through 3.13 across Ubuntu, macOS, and Windows. If CI is green, the PR is probably fine.
+CI runs the same checks on Python 3.11 through 3.13 across Ubuntu, macOS, and Windows. If CI is green, the PR is probably fine.
 
 ## Commits
 

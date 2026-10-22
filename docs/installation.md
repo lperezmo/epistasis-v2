@@ -1,6 +1,6 @@
 ---
 title: "Install epistasis-v2 from PyPI or source"
-description: "Install epistasis-v2 from PyPI to get pre-built wheels with Rust extensions, or compile from source with a Rust toolchain. Supports Python 3.10 through 3.13."
+description: "Install epistasis-v2 from PyPI to get pre-built wheels with Rust extensions, or compile from source with a Rust toolchain. Supports Python 3.11 through 3.13."
 ---
 
 # Install epistasis-v2
@@ -9,7 +9,7 @@ epistasis-v2 is distributed as a source distribution and a set of platform wheel
 
 ## Prerequisites
 
-- **Python 3.10 or later.** Supported versions: 3.10, 3.11, 3.12, 3.13.
+- **Python 3.11 or later.** Supported versions: 3.11, 3.12, 3.13.
 - **pip** (any recent version). No Rust toolchain is needed when installing from a PyPI wheel.
 
 === "PyPI install"
@@ -84,7 +84,7 @@ All dependencies below are installed automatically when you run `pip install epi
 
 ## Python version support
 
-epistasis-v2 is tested on Python 3.10, 3.11, 3.12, and 3.13 in CI. Python versions older than 3.10 are not supported.
+epistasis-v2 is tested on Python 3.11, 3.12, and 3.13 in CI. Python versions older than 3.11 are not supported.
 
 ## Upgrading
 
